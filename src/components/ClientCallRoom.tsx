@@ -336,7 +336,7 @@ export default function ClientCallRoom({
               console.log('🔌 WebRTC connection disconnected');
               setRemoteUserConnected(false);
               
-              toast.warning('Connection interrupted. Attempting to reconnect...', {
+              toast('Connection interrupted. Attempting to reconnect...', {
                 duration: 4000,
                 icon: '🔄'
               });
@@ -355,7 +355,7 @@ export default function ClientCallRoom({
               setRemoteUserConnected(false);
               
               // Connection was intentionally closed, likely ending session
-              toast.info('Connection closed', {
+              toast('Connection closed', {
                 duration: 2000,
                 icon: 'ℹ️'
               });
@@ -769,7 +769,7 @@ export default function ClientCallRoom({
                   console.log('🎯 Client Jitsi session ended:', { roomName: jitsiRoomName });
                   endSession();
                 }}
-                onError={(error) => {
+                onError={(error: any) => {
                   console.error('🚨 Client Jitsi error:', error);
                   toast.error('Connection failed. Please try again.');
                   onError(error);

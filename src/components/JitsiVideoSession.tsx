@@ -42,7 +42,7 @@ export default function JitsiVideoSession({
   const [reconnectAttempts, setReconnectAttempts] = useState(0);
   const [authBypassAttempts, setAuthBypassAttempts] = useState(0);
   const apiRef = useRef<any>(null);
-  const reconnectTimeoutRef = useRef<NodeJS.Timeout>();
+  const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Load Jitsi Meet External API script
   useEffect(() => {
