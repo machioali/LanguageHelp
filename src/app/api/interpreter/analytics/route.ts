@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
       decoded = verifyJWTToken(token);
       console.log('✅ Token decoded successfully:', { userId: decoded.userId, role: decoded.role });
     } catch (tokenError) {
-      console.log('❌ Token verification failed:', tokenError.message);
+      console.log('❌ Token verification failed:', tokenError instanceof Error ? tokenError.message : 'Unknown error');
       return NextResponse.json(
         { error: 'Invalid or expired token' },
         { status: 401 }
@@ -177,7 +177,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error('Get interpreter analytics error:', error);
     
-    if (error.message === 'Invalid or expired token') {
+    if (error instanceof Error && error.message === 'Invalid or expired token') {
       return NextResponse.json(
         { error: 'Invalid or expired authentication token' },
         { status: 401 }
