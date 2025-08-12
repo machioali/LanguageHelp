@@ -1,9 +1,9 @@
 {
   "functions": {
-    "app/api/**/*.ts": {
+    "src/app/api/**/*.ts": {
       "maxDuration": 30
     },
-    "api/**/*.ts": {
+    "src/pages/api/**/*.ts": {
       "maxDuration": 30
     }
   },
@@ -13,8 +13,5 @@
       "destination": "/api/socket"
     }
   ],
-  "env": {
-    "NODE_ENV": "production"
-  },
   "buildCommand": "npx prisma generate && npm run build"
 }
