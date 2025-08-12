@@ -123,7 +123,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Create interpreter session error:', error);
     
-    if (error.message === 'Invalid or expired token') {
+    if (error instanceof Error && error.message === 'Invalid or expired token') {
       return NextResponse.json(
         { error: 'Invalid or expired authentication token' },
         { status: 401 }

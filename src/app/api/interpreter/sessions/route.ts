@@ -205,7 +205,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error('Get interpreter session reports error:', error);
     
-    if (error.message === 'Invalid or expired token') {
+    if (error instanceof Error && error.message === 'Invalid or expired token') {
       return NextResponse.json(
         { error: 'Invalid or expired authentication token' },
         { status: 401 }
