@@ -82,7 +82,7 @@ export function SubscriptionDemo() {
       alert(`Successfully subscribed to ${planId}!`);
     } catch (error) {
       console.error('❌ Test subscription error:', error);
-      alert(`Failed to subscribe to ${planId}: ${error.message}`);
+      alert(`Failed to subscribe to ${planId}: ${error instanceof Error ? error.message : String(error)}`);
     } finally {
       console.log('🏁 Subscription process completed');
       setIsUpgrading(false);
@@ -310,7 +310,7 @@ export function SubscriptionDemo() {
                   }
                 } catch (error) {
                   console.error('🔍 Auth Test Error:', error);
-                  alert(`❌ Auth Test Failed: ${error.message}`);
+                  alert(`❌ Auth Test Failed: ${error instanceof Error ? error.message : String(error)}`);
                 }
               }}
             >
@@ -340,7 +340,7 @@ export function SubscriptionDemo() {
                   }
                 } catch (error) {
                   console.error('🧪 Subscription Test Error:', error);
-                  alert(`❌ Subscription Test Failed: ${error.message}`);
+                  alert(`❌ Subscription Test Failed: ${error instanceof Error ? error.message : String(error)}`);
                 }
               }}
             >

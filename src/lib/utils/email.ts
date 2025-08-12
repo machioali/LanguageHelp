@@ -15,7 +15,7 @@ const FROM_EMAIL = process.env.FROM_EMAIL || 'noreply@languagehelp.com';
 const APP_URL = process.env.NEXTAUTH_URL || 'http://localhost:3000';
 
 // Create transporter
-const transporter = nodemailer.createTransporter(EMAIL_CONFIG);
+const transporter = nodemailer.createTransport(EMAIL_CONFIG);
 
 interface WelcomeEmailData {
   firstName: string;

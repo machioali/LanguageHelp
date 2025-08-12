@@ -113,7 +113,7 @@ export async function GET(request: NextRequest) {
       }
       
       // Map database status to frontend status
-      const statusMap = {
+      const statusMap: Record<string, string> = {
         'COMPLETED': 'Completed',
         'CANCELLED': 'Cancelled',
         'NO_SHOW': 'No-Show',
@@ -168,7 +168,7 @@ export async function GET(request: NextRequest) {
       .reduce((sum, r) => sum + parseFloat(r.earnings.replace('$', '')), 0);
     const avgRating = reports
       .filter(r => r.rating !== null)
-      .reduce((sum, r, _, arr) => sum + r.rating / arr.length, 0);
+      .reduce((sum, r, _, arr) => sum + (r.rating || 0) / arr.length, 0);
     const totalHours = reports
       .filter(r => r.status === 'Completed')
       .reduce((sum, r) => {

@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({
         error: 'Authentication required',
         debug: {
-          cookiesFound: Object.fromEntries(request.cookies.entries()),
+        cookiesFound: Object.fromEntries(Array.from(request.cookies)),
           headers: Object.fromEntries(request.headers.entries())
         }
       }, { status: 401 });
@@ -33,12 +33,12 @@ export async function GET(request: NextRequest) {
       console.log(`   Role: ${decoded.role}`);
       console.log(`   Profile ID: ${decoded.interpreterProfileId}`);
     } catch (error) {
-      console.log(`❌ Token verification failed: ${error.message}`);
+      console.log(`❌ Token verification failed: ${error instanceof Error ? error.message : String(error)}`);
       return NextResponse.json({
-        error: 'Invalid or expired token',
-        debug: {
-          tokenExists: true,
-          verificationError: error.message
+        success: false,
+        message: 'Token verification failed',
+        error: {
+          verificationError: error instanceof Error ? error.message : String(error)
         }
       }, { status: 401 });
     }
@@ -134,8 +134,8 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       error: 'Authentication test failed',
       debug: {
-        errorMessage: error.message,
-        errorType: error.constructor.name
+        errorMessage: error instanceof Error ? error.message : String(error),
+        errorType: error instanceof Error ? error.constructor.name : typeof error
       }
     }, { status: 500 });
   }

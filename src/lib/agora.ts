@@ -20,7 +20,7 @@ export class AgoraAPI {
       this.appId,
       this.appCertificate,
       channelName,
-      uid,
+      uid: parseInt(uid),
       agoraRole,
       expireTime
     );
