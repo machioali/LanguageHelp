@@ -6,13 +6,16 @@ import { verifyJWTToken } from '@/lib/utils/credentials';
 export async function GET(request: NextRequest) {
   try {
     console.log('🔍 Auth check API called');
-    console.log('📋 All cookies:', request.cookies.getAll().map(c => ({ name: c.name, hasValue: !!c.value })));
-    
+    console.log(
+      '📋 All cookies:',
+      request.cookies.getAll().map(c => ({ name: c.name, hasValue: !!c.value }))
+    );
+
     // Get token from cookies
     const token = request.cookies.get('auth-token')?.value;
     console.log('🍪 Auth token present:', !!token);
     console.log('🍪 Token length:', token?.length);
-    
+
     if (!token) {
       return NextResponse.json({
         success: false,
@@ -29,21 +32,31 @@ export async function GET(request: NextRequest) {
     let decoded;
     try {
       decoded = verifyJWTToken(token);
-      console.log('✅ Token decoded:', { 
-        userId: decoded.userId, 
-        role: decoded.role, 
-        email: decoded.email 
+      console.log('✅ Token decoded:', {
+        userId: decoded.userId,
+        role: decoded.role,
+        email: decoded.email
       });
     } catch (tokenError) {
-      console.log('❌ Token verification failed:', tokenError.message);
-      return NextResponse.json({
-        success: false,
-        error: `Token verification failed: ${tokenError.message}`,
-        tokenPresent: true,
-        tokenLength: token.length
-      });
+      if (tokenError instanceof Error) {
+        console.log('❌ Token verification failed:', tokenError.message);
+        return NextResponse.json({
+          success: false,
+          error: `Token verification failed: ${tokenError.message}`,
+          tokenPresent: true,
+          tokenLength: token.length
+        });
+      } else {
+        console.log('❌ Token verification failed:', tokenError);
+        return NextResponse.json({
+          success: false,
+          error: 'Token verification failed: Unknown error',
+          tokenPresent: true,
+          tokenLength: token.length
+        });
+      }
     }
-    
+
     if (!decoded) {
       return NextResponse.json({
         success: false,
@@ -53,12 +66,8 @@ export async function GET(request: NextRequest) {
 
     // Check if user exists and has interpreter profile
     const interpreter = await prisma.user.findUnique({
-      where: { 
-        id: decoded.userId,
-      },
-      include: {
-        interpreterProfile: true
-      }
+      where: { id: decoded.userId },
+      include: { interpreterProfile: true }
     });
 
     console.log('👤 User lookup result:', {
@@ -95,7 +104,7 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    // Success!
+    // ✅ Success
     return NextResponse.json({
       success: true,
       message: 'Authentication successful',
@@ -120,11 +129,18 @@ export async function GET(request: NextRequest) {
     });
 
   } catch (error) {
-    console.error('Auth check error:', error);
+    if (error instanceof Error) {
+      console.error('Auth check error:', error);
+      return NextResponse.json({
+        success: false,
+        error: `Server error: ${error.message}`,
+        stack: error.stack?.split('\n').slice(0, 3)
+      });
+    }
+    console.error('Auth check unknown error:', error);
     return NextResponse.json({
       success: false,
-      error: `Server error: ${error.message}`,
-      stack: error.stack?.split('\n').slice(0, 3)
+      error: 'Server error: Unknown error'
     });
   }
 }
