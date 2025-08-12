@@ -5,7 +5,7 @@ import path from 'path';
 // Free booking system using JSON file storage (no database costs)
 const BOOKINGS_FILE = path.join(process.cwd(), 'data', 'bookings.json');
 const INTERPRETERS_FILE = path.join(process.cwd(), 'data', 'interpreters.json');
-const NOTIFICATIONS_FILE = path.join(process.cwd(), 'data', notifications.json');
+const NOTIFICATIONS_FILE = path.join(process.cwd(), 'data', 'notifications.json');
 
 // Ensure data directory exists
 const ensureDataDirectory = () => {
