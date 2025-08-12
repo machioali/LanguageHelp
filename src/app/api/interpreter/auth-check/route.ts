@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
     console.log('🔍 Auth check API called');
     console.log(
       '📋 All cookies:',
-      request.cookies.getAll().map(c => ({ name: c.name, hasValue: !!c.value }))
+      request.cookies.getAll().map((c) => ({ name: c.name, hasValue: !!c.value }))
     );
 
     // Get token from cookies
@@ -20,11 +20,11 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({
         success: false,
         error: 'No auth token found',
-        cookies: request.cookies.getAll().map(c => c.name),
+        cookies: request.cookies.getAll().map((c) => c.name),
         debug: {
           cookieCount: request.cookies.getAll().length,
           userAgent: request.headers.get('user-agent'),
-        }
+        },
       });
     }
 
@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
       console.log('✅ Token decoded:', {
         userId: decoded.userId,
         role: decoded.role,
-        email: decoded.email
+        email: decoded.email,
       });
     } catch (tokenError) {
       if (tokenError instanceof Error) {
@@ -44,7 +44,7 @@ export async function GET(request: NextRequest) {
           success: false,
           error: `Token verification failed: ${tokenError.message}`,
           tokenPresent: true,
-          tokenLength: token.length
+          tokenLength: token.length,
         });
       } else {
         console.log('❌ Token verification failed:', tokenError);
@@ -52,7 +52,7 @@ export async function GET(request: NextRequest) {
           success: false,
           error: 'Token verification failed: Unknown error',
           tokenPresent: true,
-          tokenLength: token.length
+          tokenLength: token.length,
         });
       }
     }
@@ -60,21 +60,21 @@ export async function GET(request: NextRequest) {
     if (!decoded) {
       return NextResponse.json({
         success: false,
-        error: 'Token decoded but no data found'
+        error: 'Token decoded but no data found',
       });
     }
 
     // Check if user exists and has interpreter profile
     const interpreter = await prisma.user.findUnique({
       where: { id: decoded.userId },
-      include: { interpreterProfile: true }
+      include: { interpreterProfile: true },
     });
 
     console.log('👤 User lookup result:', {
       userFound: !!interpreter,
       userRole: interpreter?.role,
       hasProfile: !!interpreter?.interpreterProfile,
-      profileId: interpreter?.interpreterProfile?.id
+      profileId: interpreter?.interpreterProfile?.id,
     });
 
     if (!interpreter) {
@@ -82,7 +82,7 @@ export async function GET(request: NextRequest) {
         success: false,
         error: 'User not found in database',
         decodedUserId: decoded.userId,
-        decodedRole: decoded.role
+        decodedRole: decoded.role,
       });
     }
 
@@ -91,7 +91,7 @@ export async function GET(request: NextRequest) {
         success: false,
         error: `User role is ${interpreter.role}, not INTERPRETER`,
         actualRole: interpreter.role,
-        expectedRole: 'INTERPRETER'
+        expectedRole: 'INTERPRETER',
       });
     }
 
@@ -100,7 +100,7 @@ export async function GET(request: NextRequest) {
         success: false,
         error: 'User exists but has no interpreter profile',
         userId: interpreter.id,
-        userRole: interpreter.role
+        userRole: interpreter.role,
       });
     }
 
@@ -112,35 +112,34 @@ export async function GET(request: NextRequest) {
         id: interpreter.id,
         email: interpreter.email,
         role: interpreter.role,
-        name: interpreter.name
+        name: interpreter.name,
       },
       interpreter: {
         id: interpreter.interpreterProfile.id,
         firstName: interpreter.interpreterProfile.firstName,
         lastName: interpreter.interpreterProfile.lastName,
-        status: interpreter.interpreterProfile.status
+        status: interpreter.interpreterProfile.status,
       },
       token: {
         valid: true,
         userId: decoded.userId,
         role: decoded.role,
-        email: decoded.email
-      }
+        email: decoded.email,
+      },
     });
-
   } catch (error) {
     if (error instanceof Error) {
       console.error('Auth check error:', error);
       return NextResponse.json({
         success: false,
         error: `Server error: ${error.message}`,
-        stack: error.stack?.split('\n').slice(0, 3)
+        stack: error.stack?.split('\n').slice(0, 3),
       });
     }
     console.error('Auth check unknown error:', error);
     return NextResponse.json({
       success: false,
-      error: 'Server error: Unknown error'
+      error: 'Server error: Unknown error',
     });
   }
 }
