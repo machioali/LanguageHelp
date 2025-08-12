@@ -32,7 +32,7 @@ function verifyInterpreterToken(request: NextRequest) {
     // console.log(`[JWT] Valid token for: ${decoded.email} (${decoded.role})`);
     return decoded;
   } catch (error) {
-    console.log(`[JWT] Token verification failed: ${error.message}`);
+    console.log(`[JWT] Token verification failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     return null;
   }
 }
