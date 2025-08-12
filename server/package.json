@@ -1,0 +1,18 @@
+{
+  "name": "languagehelp-signaling-server",
+  "version": "1.0.0",
+  "description": "Free WebRTC signaling server for LanguageHelp",
+  "main": "signaling.js",
+  "scripts": {
+    "start": "node signaling.js",
+    "dev": "nodemon signaling.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "socket.io": "^4.7.2",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}

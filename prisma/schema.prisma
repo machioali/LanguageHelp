@@ -1,0 +1,590 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id                 String              @id @default(cuid())
+  name               String?
+  email              String              @unique
+  password           String?
+  emailVerified      DateTime?
+  image              String?
+  role               String              @default("CLIENT")
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  companyName        String?
+  phoneNumber        String?
+  accounts           Account[]
+  interpreterProfile InterpreterProfile?
+  clientProfile      ClientProfile?
+  sessions           Session[]
+  clientSessions     InterpreterSession[] @relation("ClientSessions")
+  clientBookings     SessionBooking[]    @relation("ClientBookings")
+
+  @@map("users")
+}
+
+model InterpreterProfile {
+  id              String                      @id @default(cuid())
+  userId          String                      @unique
+  firstName       String
+  lastName        String
+  phone           String?
+  hourlyRate      Float?
+  status          String                      @default("PENDING")
+  isVerified      Boolean                     @default(false)
+  bio             String?
+  experience      Int?
+  availability    String?
+  createdAt       DateTime                    @default(now())
+  updatedAt       DateTime                    @updatedAt
+  certifications  InterpreterCertification[]
+  credentials     InterpreterCredential?
+  languages       InterpreterLanguage[]
+  user            User                        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  specializations InterpreterSpecialization[]
+  sessions        InterpreterSession[]
+  bookings        SessionBooking[]
+  analytics       InterpreterAnalytics?
+}
+
+model InterpreterCredential {
+  id                   String             @id @default(cuid())
+  interpreterProfileId String             @unique
+  tempPassword         String?
+  isFirstLogin         Boolean            @default(true)
+  loginToken           String?
+  tokenExpiry          DateTime?
+  lastLoginAt          DateTime?
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+  interpreterProfile   InterpreterProfile @relation(fields: [interpreterProfileId], references: [id], onDelete: Cascade)
+}
+
+model InterpreterLanguage {
+  id                   String             @id @default(cuid())
+  interpreterProfileId String
+  languageCode         String
+  languageName         String
+  proficiency          String
+  isNative             Boolean            @default(false)
+  createdAt            DateTime           @default(now())
+  interpreterProfile   InterpreterProfile @relation(fields: [interpreterProfileId], references: [id], onDelete: Cascade)
+
+  @@unique([interpreterProfileId, languageCode])
+}
+
+model InterpreterSpecialization {
+  id                   String             @id @default(cuid())
+  interpreterProfileId String
+  specialization       String
+  createdAt            DateTime           @default(now())
+  interpreterProfile   InterpreterProfile @relation(fields: [interpreterProfileId], references: [id], onDelete: Cascade)
+
+  @@unique([interpreterProfileId, specialization])
+}
+
+model InterpreterCertification {
+  id                   String             @id @default(cuid())
+  interpreterProfileId String
+  name                 String
+  issuingOrganization  String
+  issueDate            DateTime?
+  expiryDate           DateTime?
+  certificateNumber    String?
+  isVerified           Boolean            @default(false)
+  createdAt            DateTime           @default(now())
+  interpreterProfile   InterpreterProfile @relation(fields: [interpreterProfileId], references: [id], onDelete: Cascade)
+}
+
+model InterpreterApplication {
+  id              String    @id @default(cuid())
+  email           String    @unique
+  firstName       String
+  lastName        String
+  phone           String?
+  languages       String
+  specializations String
+  experience      Int?
+  certifications  String?
+  bio             String?
+  resume          String?
+  status          String    @default("PENDING")
+  notes           String?
+  reviewedBy      String?
+  reviewedAt      DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// Session models for interpretation services
+model InterpreterSession {
+  id                   String             @id @default(cuid())
+  interpreterProfileId String
+  clientId             String?
+  clientName           String
+  sessionType          String             // "VRI" or "OPI"
+  languageFrom         String             @default("English")
+  languageTo           String
+  specialization       String?
+  status               String             @default("SCHEDULED") // SCHEDULED, IN_PROGRESS, COMPLETED, CANCELLED, NO_SHOW
+  scheduledAt          DateTime
+  startedAt            DateTime?
+  endedAt              DateTime?
+  duration             Int?               // in minutes
+  hourlyRate           Float?
+  earnings             Float              @default(0.0)
+  rating               Int?               // 1-5 stars
+  feedback             String?
+  notes                String?
+  cancellationReason   String?
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+  interpreterProfile   InterpreterProfile @relation(fields: [interpreterProfileId], references: [id], onDelete: Cascade)
+  client               User?              @relation("ClientSessions", fields: [clientId], references: [id], onDelete: SetNull)
+}
+
+// Booking model for scheduled sessions
+model SessionBooking {
+  id                   String             @id @default(cuid())
+  interpreterProfileId String?
+  clientId             String
+  sessionType          String             // "VRI" or "OPI"
+  languageFrom         String             @default("English")
+  languageTo           String
+  specialization       String?
+  status               String             @default("PENDING") // PENDING, CONFIRMED, REJECTED, CANCELLED
+  scheduledAt          DateTime
+  duration             Int                // requested duration in minutes
+  hourlyRate           Float?
+  notes                String?
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+  interpreterProfile   InterpreterProfile? @relation(fields: [interpreterProfileId], references: [id], onDelete: SetNull)
+  client               User               @relation("ClientBookings", fields: [clientId], references: [id], onDelete: Cascade)
+}
+
+// Private Analytics Storage - Each interpreter has their own isolated analytics
+model InterpreterAnalytics {
+  id                   String             @id @default(cuid())
+  interpreterProfileId String             @unique
+  
+  // Overview metrics (calculated and cached)
+  totalEarnings        Float              @default(0.0)
+  totalSessions        Int                @default(0)
+  completedSessions    Int                @default(0)
+  cancelledSessions    Int                @default(0)
+  noShowSessions       Int                @default(0)
+  totalHours           Float              @default(0.0)
+  avgRating            Float              @default(0.0)
+  avgSessionDuration   Float              @default(0.0)
+  completionRate       Float              @default(0.0)
+  responseTime         Float              @default(0.0) // in seconds
+  
+  // Growth metrics
+  lastPeriodEarnings   Float              @default(0.0)
+  lastPeriodSessions   Int                @default(0)
+  lastPeriodRating     Float              @default(0.0)
+  
+  // Last updated timestamp for cache invalidation
+  lastCalculated       DateTime           @default(now())
+  calculationPeriod    String             @default("last30days") // last7days, last30days, last3months, lastyear
+  
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+  interpreterProfile   InterpreterProfile @relation(fields: [interpreterProfileId], references: [id], onDelete: Cascade)
+  
+  // Related analytics data
+  languageStats        InterpreterLanguageStats[]
+  weeklyStats          InterpreterWeeklyStats[]
+  performanceHistory   InterpreterPerformanceHistory[]
+}
+
+// Language-specific statistics for each interpreter
+model InterpreterLanguageStats {
+  id                     String                @id @default(cuid())
+  interpreterAnalyticsId String
+  language               String                // Language pair (e.g., "English → Spanish")
+  totalSessions          Int                   @default(0)
+  completedSessions      Int                   @default(0)
+  totalEarnings          Float                 @default(0.0)
+  avgRating              Float                 @default(0.0)
+  lastSessionDate        DateTime?
+  createdAt              DateTime              @default(now())
+  updatedAt              DateTime              @updatedAt
+  interpreterAnalytics   InterpreterAnalytics  @relation(fields: [interpreterAnalyticsId], references: [id], onDelete: Cascade)
+  
+  @@unique([interpreterAnalyticsId, language])
+}
+
+// Weekly breakdown statistics for each interpreter
+model InterpreterWeeklyStats {
+  id                     String                @id @default(cuid())
+  interpreterAnalyticsId String
+  weekStartDate          DateTime              // Start of the week
+  weekEndDate            DateTime              // End of the week
+  vriSessions            Int                   @default(0)
+  opiSessions            Int                   @default(0)
+  totalSessions          Int                   @default(0)
+  completedSessions      Int                   @default(0)
+  totalEarnings          Float                 @default(0.0)
+  avgRating              Float                 @default(0.0)
+  createdAt              DateTime              @default(now())
+  updatedAt              DateTime              @updatedAt
+  interpreterAnalytics   InterpreterAnalytics  @relation(fields: [interpreterAnalyticsId], references: [id], onDelete: Cascade)
+  
+  @@unique([interpreterAnalyticsId, weekStartDate])
+}
+
+// Performance history tracking for trends
+model InterpreterPerformanceHistory {
+  id                     String                @id @default(cuid())
+  interpreterAnalyticsId String
+  recordDate             DateTime              // Date of this performance snapshot
+  totalEarnings          Float                 @default(0.0)
+  totalSessions          Int                   @default(0)
+  avgRating              Float                 @default(0.0)
+  completionRate         Float                 @default(0.0)
+  responseTime           Float                 @default(0.0)
+  period                 String                // "daily", "weekly", "monthly"
+  createdAt              DateTime              @default(now())
+  interpreterAnalytics   InterpreterAnalytics  @relation(fields: [interpreterAnalyticsId], references: [id], onDelete: Cascade)
+  
+  @@unique([interpreterAnalyticsId, recordDate, period])
+}
+
+// ==================== CLIENT-SPECIFIC MODELS ====================
+
+// Client Profile - Extended client information
+model ClientProfile {
+  id                       String                @id @default(cuid())
+  userId                   String                @unique
+  firstName                String?
+  lastName                 String?
+  phone                    String?
+  phoneVerified            Boolean               @default(false)
+  company                  String?
+  jobTitle                 String?
+  country                  String?
+  timezone                 String?
+  primaryLanguage          String                @default("English")
+  frequentLanguages        String?               // JSON array of languages
+  preferredInterpreterGender String?             // "Any", "Male", "Female"
+  preferredInterpreterRegion String?             // "Any", "North America", etc.
+  
+  // Notification preferences
+  emailNotifications       Boolean               @default(true)
+  smsNotifications         Boolean               @default(false)
+  sessionReminders         Boolean               @default(true)
+  marketingEmails          Boolean               @default(false)
+  
+  // Account status
+  isActive                 Boolean               @default(true)
+  lastLoginAt              DateTime?
+  
+  createdAt                DateTime              @default(now())
+  updatedAt                DateTime              @updatedAt
+  
+  // Relationships
+  user                     User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subscriptions            ClientSubscription[]
+  sessions                 ClientSession[]
+  bookingRequests          ClientBookingRequest[]
+  paymentMethods           ClientPaymentMethod[]
+  usage                    ClientUsage?
+  documents                ClientDocument[]
+}
+
+// Client Subscription Management
+model ClientSubscription {
+  id                String        @id @default(cuid())
+  clientProfileId   String
+  planId            String        // References to plan types
+  planName          String        // "Free Trial", "Basic Plan", "Premium Plan", etc.
+  status            String        // "ACTIVE", "CANCELLED", "EXPIRED", "TRIAL"
+  
+  // Pricing and billing
+  monthlyPrice      Float
+  currency          String        @default("USD")
+  billingCycle      String        @default("monthly") // "monthly", "yearly"
+  
+  // Usage limits
+  minutesIncluded   Int           // Total minutes in plan
+  minutesUsed       Int           @default(0)
+  minutesRemaining  Int           // Calculated field
+  
+  // Billing periods
+  currentPeriodStart DateTime
+  currentPeriodEnd   DateTime
+  nextBillingDate    DateTime?
+  
+  // Subscription management
+  startDate         DateTime      @default(now())
+  endDate           DateTime?
+  cancelledAt       DateTime?
+  cancellationReason String?
+  
+  // Payment
+  stripeSubscriptionId String?    @unique
+  stripeCustomerId     String?
+  
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  
+  // Relationships
+  clientProfile     ClientProfile @relation(fields: [clientProfileId], references: [id], onDelete: Cascade)
+}
+
+// Client Session Management - Their view of interpretation sessions
+model ClientSession {
+  id                  String        @id @default(cuid())
+  clientProfileId     String
+  interpreterSessionId String?      @unique // Links to InterpreterSession
+  
+  // Session details
+  sessionType         String        // "VRI" (Video), "OPI" (Audio)
+  languageFrom        String        @default("English")
+  languageTo          String
+  specialization      String?       // "Medical", "Legal", "Business", etc.
+  
+  // Scheduling
+  requestedAt         DateTime      @default(now())
+  scheduledAt         DateTime?
+  startedAt           DateTime?
+  endedAt             DateTime?
+  duration            Int?          // Actual duration in minutes
+  
+  // Status tracking
+  status              String        @default("REQUESTED") // REQUESTED, MATCHED, CONFIRMED, IN_PROGRESS, COMPLETED, CANCELLED, NO_SHOW
+  priority            String        @default("normal")    // "normal", "urgent", "emergency"
+  
+  // Interpreter assignment
+  interpreterProfileId String?
+  interpreterName     String?
+  
+  // Session details
+  notes               String?       // Client's notes/context
+  sessionNotes        String?       // Notes from the session
+  clientRating        Int?          // 1-5 stars
+  clientFeedback      String?
+  interpreterRating   Int?          // Interpreter's rating of client
+  
+  // Billing
+  hourlyRate          Float?
+  totalCost           Float         @default(0.0)
+  minutesCharged      Int           @default(0)
+  
+  // Technical details
+  connectionType      String?       // "video", "audio", "phone"
+  sessionUrl          String?       // Meeting room URL
+  recordingUrl        String?       // Recording download URL
+  hasRecording        Boolean       @default(false)
+  
+  // Cancellation
+  cancellationReason  String?
+  cancelledBy         String?       // "client", "interpreter", "system"
+  
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+  
+  // Relationships
+  clientProfile       ClientProfile @relation(fields: [clientProfileId], references: [id], onDelete: Cascade)
+}
+
+// Client Booking Requests - For scheduled sessions
+model ClientBookingRequest {
+  id                  String        @id @default(cuid())
+  clientProfileId     String
+  
+  // Request details
+  sessionType         String        // "VRI" or "OPI"
+  languageFrom        String        @default("English")
+  languageTo          String
+  specialization      String?
+  
+  // Scheduling preferences
+  preferredDate       DateTime
+  preferredTime       String?       // "morning", "afternoon", "evening", "anytime"
+  duration            Int           // Requested duration in minutes
+  isFlexible          Boolean       @default(true)
+  
+  // Requirements
+  interpreterGender   String?       // "Any", "Male", "Female"
+  interpreterRegion   String?       // Regional preference
+  specialRequests     String?       // Additional requirements
+  
+  // Documents and context
+  contextNotes        String?       // Background information
+  hasDocuments        Boolean       @default(false)
+  
+  // Status
+  status              String        @default("PENDING") // PENDING, MATCHED, CONFIRMED, CANCELLED, EXPIRED
+  priority            String        @default("normal")
+  
+  // Matching
+  matchedInterpreterIds String?     // JSON array of interpreter IDs
+  selectedInterpreterId String?
+  
+  // Response tracking
+  expiresAt           DateTime      // When the request expires
+  responseDeadline    DateTime      // When interpreter must respond
+  
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+  
+  // Relationships
+  clientProfile       ClientProfile @relation(fields: [clientProfileId], references: [id], onDelete: Cascade)
+}
+
+// Client Payment Methods
+model ClientPaymentMethod {
+  id                String        @id @default(cuid())
+  clientProfileId   String
+  
+  // Payment method details
+  type              String        // "card", "paypal", "bank_transfer"
+  isDefault         Boolean       @default(false)
+  isActive          Boolean       @default(true)
+  
+  // Card details (encrypted/tokenized)
+  cardLast4         String?
+  cardBrand         String?       // "visa", "mastercard", "amex", etc.
+  cardExpMonth      Int?
+  cardExpYear       Int?
+  
+  // Stripe integration
+  stripePaymentMethodId String?    @unique
+  stripeCustomerId      String?
+  
+  // Billing address
+  billingName       String?
+  billingEmail      String?
+  billingAddress    String?
+  billingCity       String?
+  billingState      String?
+  billingZip        String?
+  billingCountry    String?
+  
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  
+  // Relationships
+  clientProfile     ClientProfile @relation(fields: [clientProfileId], references: [id], onDelete: Cascade)
+}
+
+// Client Usage Tracking
+model ClientUsage {
+  id                String        @id @default(cuid())
+  clientProfileId   String        @unique
+  
+  // Current period usage
+  currentPeriodStart DateTime
+  currentPeriodEnd   DateTime
+  minutesUsed       Int           @default(0)
+  minutesRemaining  Int           @default(0)
+  sessionsThisPeriod Int          @default(0)
+  
+  // Historical totals
+  totalMinutesAllTime Int         @default(0)
+  totalSessionsAllTime Int        @default(0)
+  totalSpentAllTime    Float      @default(0.0)
+  
+  // Usage by type
+  vriMinutes        Int           @default(0)
+  opiMinutes        Int           @default(0)
+  
+  // Usage by language (JSON)
+  languageUsage     String?       // JSON object with language usage stats
+  
+  // Billing tracking
+  lastBilledAmount  Float         @default(0.0)
+  lastBilledDate    DateTime?
+  nextBillingDate   DateTime?
+  
+  // Overage tracking
+  hasOverage        Boolean       @default(false)
+  overageMinutes    Int           @default(0)
+  overageCharges    Float         @default(0.0)
+  
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  
+  // Relationships
+  clientProfile     ClientProfile @relation(fields: [clientProfileId], references: [id], onDelete: Cascade)
+}
+
+// Client Document Storage
+model ClientDocument {
+  id                String        @id @default(cuid())
+  clientProfileId   String
+  
+  // Document details
+  fileName          String
+  originalFileName  String
+  fileSize          Int           // in bytes
+  mimeType          String
+  fileUrl           String        // S3 or similar storage URL
+  
+  // Document metadata
+  title             String?
+  description       String?
+  language          String?
+  documentType      String?       // "contract", "medical_record", "legal_document", etc.
+  
+  // Access control
+  isPrivate         Boolean       @default(true)
+  sharedWithSessions String?      // JSON array of session IDs
+  
+  // Processing status
+  isProcessed       Boolean       @default(false)
+  ocrText           String?       // Extracted text for search
+  
+  // Usage tracking
+  downloadCount     Int           @default(0)
+  lastAccessedAt    DateTime?
+  
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  
+  // Relationships
+  clientProfile     ClientProfile @relation(fields: [clientProfileId], references: [id], onDelete: Cascade)
+}

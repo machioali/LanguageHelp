@@ -1,0 +1,56 @@
+[
+  {
+    "id": "interpreter_001",
+    "name": "Maria Garcia",
+    "email": "maria@example.com",
+    "languages": [
+      "en",
+      "es",
+      "fr"
+    ],
+    "specializations": [
+      "Medical",
+      "Legal"
+    ],
+    "rating": 4.8,
+    "status": "available",
+    "hourlyRate": 50,
+    "bio": "Certified medical interpreter with 5+ years experience"
+  },
+  {
+    "id": "interpreter_002",
+    "name": "Ahmed Hassan",
+    "email": "ahmed@example.com",
+    "languages": [
+      "en",
+      "ar",
+      "fr"
+    ],
+    "specializations": [
+      "Business",
+      "Technical"
+    ],
+    "rating": 4.9,
+    "status": "available",
+    "hourlyRate": 60,
+    "bio": "Business interpreter specializing in technical translations"
+  },
+  {
+    "id": "interpreter_003",
+    "name": "Li Wei",
+    "email": "li.wei@example.com",
+    "languages": [
+      "en",
+      "zh",
+      "ja"
+    ],
+    "specializations": [
+      "Business",
+      "Legal"
+    ],
+    "rating": 4.7,
+    "status": "available",
+    "hourlyRate": 55,
+    "bio": "Legal interpreter for East Asian languages"
+  }
+]

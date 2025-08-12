@@ -1,0 +1,29 @@
+{
+  "email": "machio2020@gmail.com",
+  "firstName": "Hamza",
+  "lastName": "Ali",
+  "languages": [
+    {
+      "languageCode": "en",
+      "languageName": "English",
+      "proficiency": "FLUENT",
+      "isNative": true
+    },
+    {
+      "languageCode": "sw",
+      "languageName": "Swahili",
+      "proficiency": "NATIVE",
+      "isNative": true
+    }
+  ],
+  "specializations": [
+    "GENERAL",
+    "HEALTHCARE",
+    "EDUCATION"
+  ],
+  "autoApprove": true,
+  "sendCredentials": true,
+  "hourlyRate": 20,
+  "experience": 5,
+  "bio": "awsome"
+}

@@ -1,0 +1,21 @@
+{
+  "email": "hakimihussein123@gmail.com",
+  "firstName": "hakimi",
+  "lastName": "huusein",
+  "languages": [
+    {
+      "languageCode": "en",
+      "languageName": "English",
+      "proficiency": "ADVANCED",
+      "isNative": false
+    }
+  ],
+  "specializations": [
+    "HEALTHCARE"
+  ],
+  "autoApprove": true,
+  "sendCredentials": true,
+  "hourlyRate": 30,
+  "experience": 2,
+  "bio": "none"
+}

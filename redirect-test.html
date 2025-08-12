@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LanguageHelp - Redirect Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .test-link { display: block; margin: 10px 0; padding: 10px; background: #f0f0f0; border-radius: 5px; text-decoration: none; color: #333; }
+        .test-link:hover { background: #e0e0e0; }
+        .category { margin-top: 30px; }
+        h2 { color: #2563eb; }
+    </style>
+</head>
+<body>
+    <h1>LanguageHelp Redirect Test</h1>
+    <p>Use this page to test that all old interpreter dashboard links redirect properly to the new interpreter-portal paths.</p>
+    
+    <div class="category">
+        <h2>Old Paths (Should Redirect)</h2>
+        <a href="http://localhost:3000/dashboard/interpreter" class="test-link">
+            /dashboard/interpreter → /interpreter-portal/interpreter
+        </a>
+        <a href="http://localhost:3000/dashboard/interpreter/profile" class="test-link">
+            /dashboard/interpreter/profile → /interpreter-portal/interpreter/profile
+        </a>
+        <a href="http://localhost:3000/dashboard/interpreter/sessions" class="test-link">
+            /dashboard/interpreter/sessions → /interpreter-portal/interpreter/sessions
+        </a>
+        <a href="http://localhost:3000/dashboard/interpreter/settings" class="test-link">
+            /dashboard/interpreter/settings → /interpreter-portal/interpreter/settings
+        </a>
+    </div>
+
+    <div class="category">
+        <h2>New Paths (Direct Access)</h2>
+        <a href="http://localhost:3000/interpreter-portal/interpreter" class="test-link">
+            /interpreter-portal/interpreter ✓
+        </a>
+        <a href="http://localhost:3000/interpreter-portal/interpreter/profile" class="test-link">
+            /interpreter-portal/interpreter/profile ✓
+        </a>
+        <a href="http://localhost:3000/interpreter-portal/interpreter/sessions" class="test-link">
+            /interpreter-portal/interpreter/sessions ✓
+        </a>
+    </div>
+
+    <div class="category">
+        <h2>Test Instructions</h2>
+        <ol>
+            <li>Start your Next.js development server: <code>npm run dev</code></li>
+            <li>Click each "Old Paths" link above</li>
+            <li>Verify that you are redirected to the corresponding new path</li>
+            <li>Check that the URL in your browser shows the new path</li>
+            <li>Verify that the page loads correctly at the new location</li>
+        </ol>
+    </div>
+
+    <div class="category">
+        <h2>Expected Behavior</h2>
+        <ul>
+            <li>All old paths should redirect with a 301 (permanent redirect) status</li>
+            <li>The redirect should be instant and seamless</li>
+            <li>The new URL should show in the browser address bar</li>
+            <li>No 404 errors should occur</li>
+        </ul>
+    </div>
+</body>
+</html>

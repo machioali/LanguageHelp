@@ -1,0 +1,39 @@
+{
+  "email": "test.interpreter@example.com",
+  "firstName": "Maria",
+  "lastName": "Garcia",
+  "phone": "+1-555-0199",
+  "languages": [
+    {
+      "languageCode": "en",
+      "languageName": "English",
+      "proficiency": "NATIVE",
+      "isNative": true
+    },
+    {
+      "languageCode": "es",
+      "languageName": "Spanish",
+      "proficiency": "FLUENT",
+      "isNative": false
+    }
+  ],
+  "specializations": [
+    "HEALTHCARE",
+    "LEGAL"
+  ],
+  "hourlyRate": 75,
+  "bio": "Test interpreter for system validation",
+  "experience": 5,
+  "certifications": [
+    {
+      "name": "Medical Interpreter Certification",
+      "issuingOrganization": "Test Certification Board",
+      "issueDate": "2020-01-15",
+      "expiryDate": "2025-01-15",
+      "certificateNumber": "TEST-123",
+      "isVerified": true
+    }
+  ],
+  "sendCredentials": true,
+  "autoApprove": false
+}
