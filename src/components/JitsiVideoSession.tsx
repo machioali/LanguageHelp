@@ -120,10 +120,7 @@ export default function JitsiVideoSession({
         moderatedRoomServiceUrl: null,
         enableModeratedMode: false,
         
-        // FORCE ROOM TO BE COMPLETELY OPEN
-        requireDisplayName: false,
-        enableWelcomePage: false,
-        enableClosePage: false,
+        // FORCE ROOM TO BE COMPLETELY OPEN (already set above, removing duplicates)
         
         // BYPASS ALL AUTHENTICATION CHECKS
         enableAuthenticationFeatures: false,
@@ -175,7 +172,6 @@ export default function JitsiVideoSession({
         }),
         
         // Completely disable authentication - ENHANCED
-        enableEmailInStats: false,
         enableFeaturesBasedOnToken: false,
         enableGuestDomain: true,
         guestDomain: `guest.${domain}`,
@@ -195,10 +191,6 @@ export default function JitsiVideoSession({
         
         // Additional auth bypasses
         disableThirdPartyRequests: true,
-        enableNoAudioDetection: false,
-        enableNoisyMicDetection: false,
-        enableClosePage: false,
-        enableWelcomePage: false,
         disableProfile: true,
         
         // Media settings - ENHANCED FOR CLEAR TRANSMISSION
@@ -215,17 +207,13 @@ export default function JitsiVideoSession({
         
         // FORCE audio to be enabled and transmitted
         enableAudioLevelsInterval: true,
-        enableNoAudioDetection: true,
-        enableNoisyMicDetection: true,
         audioQuality: {
           stereo: false,
           opusMaxAverageBitrate: 64000
         },
         
         // Force media permissions and enable streams
-        enableUserMediaPermissions: true,
         enableVideoSipGateway: false,
-        enableClosePage: false,
         
         // Media constraints for better quality - ENHANCED AUDIO
         constraints: {
@@ -276,9 +264,6 @@ export default function JitsiVideoSession({
         maxRemoteScreenShareParticipants: -1,
         
         // Disable notifications and prompts
-        enableNoAudioDetection: false,
-        enableNoisyMicDetection: false,
-        enableEmailInStats: false,
         disableInviteFunctions: true,
         doNotStoreRoom: true,
         hideRecordingLabel: false,
@@ -310,7 +295,6 @@ export default function JitsiVideoSession({
         },
         
         // Make room completely open and public
-        channelLastN: -1,
         openBridgeChannel: true,
         
         // Additional server bypasses

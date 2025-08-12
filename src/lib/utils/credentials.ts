@@ -64,7 +64,7 @@ export function generateSessionToken(): string {
  * Create a JWT token for authentication
  */
 export function createJWTToken(payload: any, expiresIn: string = '7d'): string {
-  return jwt.sign(payload, JWT_SECRET, { expiresIn });
+  return jwt.sign(payload, JWT_SECRET, { expiresIn } as any);
 }
 
 /**
