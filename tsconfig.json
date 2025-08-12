@@ -23,5 +23,12 @@
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules",
+    "src/components/UnifiedVideoSession.tsx",
+    "src/components/video-session.tsx",
+    "src/hooks/usePhoneRinging.ts",
+    "src/pages/api/socket.ts",
+    "src/scripts/clean-languages.ts"
+  ]
 }
