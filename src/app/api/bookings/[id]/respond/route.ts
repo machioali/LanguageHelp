@@ -3,13 +3,34 @@ import { createClient } from '@supabase/supabase-js';
 import { Resend } from 'resend';
 import { AgoraAPI } from '@/lib/agora';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+// Force dynamic rendering for this route
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-const agoraAPI = new AgoraAPI();
+// Lazy initialization to prevent build-time errors
+function getSupabaseClient() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  
+  if (!supabaseUrl || !supabaseKey) {
+    throw new Error('Missing Supabase environment variables');
+  }
+  
+  return createClient(supabaseUrl, supabaseKey);
+}
+
+function getResendClient() {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
+    console.warn('RESEND_API_KEY not configured, email notifications disabled');
+    return null;
+  }
+  return new Resend(apiKey);
+}
+
+function getAgoraAPI() {
+  return new AgoraAPI();
+}
 
 interface BookingResponse {
   action: 'accept' | 'decline';
@@ -29,6 +50,8 @@ export async function POST(
     if (!interpreterUserId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+
+    const supabase = getSupabaseClient();
 
     // Get booking details
     const { data: booking, error: bookingError } = await supabase
@@ -133,6 +156,9 @@ async function createCommunicationSession(booking: any) {
       // Create Agora channel
       roomId = `session_${booking.id}_${Date.now()}`;
       
+      const agoraAPI = getAgoraAPI();
+      const supabase = getSupabaseClient();
+      
       // Generate tokens for both participants
       const clientToken = await agoraAPI.generateToken(roomId, booking.client_id);
       const interpreterToken = await agoraAPI.generateToken(roomId, booking.interpreter.user_id);
@@ -179,6 +205,8 @@ async function createCommunicationSession(booking: any) {
 async function notifyClient(booking: any, status: 'accepted' | 'declined', session?: any) {
   try {
     const isAccepted = status === 'accepted';
+    const supabase = getSupabaseClient();
+    const resend = getResendClient();
     
     // Create notification
     await supabase.from('notifications').insert({
@@ -192,39 +220,41 @@ async function notifyClient(booking: any, status: 'accepted' | 'declined', sessi
     });
 
     // Send email
-    await resend.emails.send({
-      from: 'LanguageHelp <notifications@languagehelp.com>',
-      to: booking.client.email,
-      subject: isAccepted ? '🎉 Interpreter Found!' : 'Booking Update',
-      html: isAccepted ? `
-        <div>
-          <h2>Great news! Your interpreter is ready</h2>
-          <p><strong>Interpreter:</strong> ${booking.interpreter.users.name}</p>
-          <p><strong>Languages:</strong> ${booking.source_language} → ${booking.target_language}</p>
-          <p><strong>Session:</strong> ${booking.session_type}</p>
-          
-          ${session?.joinUrl ? `
-            <a href="${session.joinUrl}" 
-               style="background: #10B981; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block; margin: 20px 0;">
-              Join Session Now
+    if (resend) {
+      await resend.emails.send({
+        from: 'LanguageHelp <notifications@languagehelp.com>',
+        to: booking.client.email,
+        subject: isAccepted ? '🎉 Interpreter Found!' : 'Booking Update',
+        html: isAccepted ? `
+          <div>
+            <h2>Great news! Your interpreter is ready</h2>
+            <p><strong>Interpreter:</strong> ${booking.interpreter.users.name}</p>
+            <p><strong>Languages:</strong> ${booking.source_language} → ${booking.target_language}</p>
+            <p><strong>Session:</strong> ${booking.session_type}</p>
+            
+            ${session?.joinUrl ? `
+              <a href="${session.joinUrl}" 
+                 style="background: #10B981; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block; margin: 20px 0;">
+                Join Session Now
+              </a>
+            ` : ''}
+            
+            <p>Your session will begin shortly. Please be ready!</p>
+          </div>
+        ` : `
+          <div>
+            <h2>Booking Update</h2>
+            <p>Unfortunately, your interpretation request was declined.</p>
+            <p>We're searching for alternative interpreters for you.</p>
+            
+            <a href="${process.env.NEXT_PUBLIC_APP_URL}/bookings" 
+               style="background: #4F46E5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
+              View Booking Status
             </a>
-          ` : ''}
-          
-          <p>Your session will begin shortly. Please be ready!</p>
-        </div>
-      ` : `
-        <div>
-          <h2>Booking Update</h2>
-          <p>Unfortunately, your interpretation request was declined.</p>
-          <p>We're searching for alternative interpreters for you.</p>
-          
-          <a href="${process.env.NEXT_PUBLIC_APP_URL}/bookings" 
-             style="background: #4F46E5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
-            View Booking Status
-          </a>
-        </div>
-      `
-    });
+          </div>
+        `
+      });
+    }
 
     // SMS notifications disabled for now
     // TODO: Add SMS notifications when needed
@@ -235,6 +265,8 @@ async function notifyClient(booking: any, status: 'accepted' | 'declined', sessi
 }
 
 async function findAlternativeInterpreters(originalBooking: any) {
+  const supabase = getSupabaseClient();
+  
   // Find other interpreters and send them the request
   const { data: alternativeInterpreters } = await supabase
     .from('interpreters')
@@ -275,6 +307,8 @@ async function findAlternativeInterpreters(originalBooking: any) {
 }
 
 async function sendAlternativeInterpreterNotification(interpreter: any, booking: any) {
+  const supabase = getSupabaseClient();
+  
   // Similar to original notification but marked as "alternative request"
   await supabase.from('notifications').insert({
     user_id: interpreter.user_id,
