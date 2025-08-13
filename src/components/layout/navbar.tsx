@@ -264,15 +264,15 @@ export function Navbar() {
 
       {/* Mobile menu */}
       {mobileMenuOpen && (
-        <div className="lg:hidden">
+        <div className="fixed inset-0 z-[100] lg:hidden">
           {/* Backdrop */}
           <div 
-            className="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm" 
+            className="absolute inset-0 bg-black/50" 
             onClick={() => setMobileMenuOpen(false)}
           />
           {/* Mobile menu panel */}
-          <div className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-background px-6 py-6 sm:max-w-sm shadow-xl border-l border-border">
-            <div className="flex items-center justify-between">
+          <div className="absolute top-0 right-0 h-full w-full bg-white dark:bg-gray-900 shadow-2xl overflow-y-auto p-6" style={{maxWidth: '400px'}}>
+            <div className="flex items-center justify-between mb-6">
               <Link href="/" className="-m-1.5 p-1.5">
                 <span className="sr-only">LanguageHelp</span>
                 <div className="flex items-center space-x-2">
