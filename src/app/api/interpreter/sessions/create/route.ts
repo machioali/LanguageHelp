@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { verifyJWTToken } from '@/lib/utils/credentials';
 
+// Force dynamic rendering for this route
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 // POST /api/interpreter/sessions/create - Create a completed session record
 export async function POST(request: NextRequest) {
   try {

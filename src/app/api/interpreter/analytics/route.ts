@@ -4,6 +4,10 @@ import { verifyJWTToken } from '@/lib/utils/credentials';
 import { PrivateAnalyticsManager } from '@/lib/analytics/private-analytics-manager';
 import { InterpreterAnalyticsInitService } from '@/lib/services/interpreter-analytics-init';
 
+// Force dynamic rendering for this route
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 // GET /api/interpreter/analytics - Get analytics data for the interpreter dashboard
 export async function GET(request: NextRequest) {
   try {

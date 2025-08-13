@@ -3,6 +3,10 @@ import { prisma } from '@/lib/prisma';
 import { verifyPassword, createJWTToken, hashPassword } from '@/lib/utils/credentials';
 import { UserRole } from '@/lib/constants';
 
+// Force dynamic rendering for this route
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 // POST /api/auth/interpreter-signin - Sign in interpreter
 export async function POST(request: NextRequest) {
   try {

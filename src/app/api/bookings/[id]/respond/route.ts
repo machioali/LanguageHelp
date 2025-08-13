@@ -162,15 +162,9 @@ async function createCommunicationSession(booking: any) {
       };
 
     } else if (booking.session_type === 'phone') {
-      // Create Twilio conference
-      const conference = await createTwilioConference(booking);
-      
-      return {
-        id: conference.id,
-        roomId: conference.sid,
-        type: 'phone',
-        conferenceId: conference.sid
-      };
+      // Phone sessions not supported yet
+      console.log('Phone sessions not implemented');
+      return null;
     }
 
     return null;
@@ -180,34 +174,7 @@ async function createCommunicationSession(booking: any) {
   }
 }
 
-async function createTwilioConference(booking: any) {
-  const twilio = require('twilio')(process.env.TWILIO_SID, process.env.TWILIO_AUTH_TOKEN);
-  
-  // Create conference
-  const conference = await twilio.conferences.create({
-    friendlyName: `Session ${booking.id}`,
-    record: true,
-    statusCallback: `${process.env.NEXT_PUBLIC_APP_URL}/api/twilio/conference-status`
-  });
-
-  // Call both participants
-  await Promise.all([
-    // Call client
-    twilio.calls.create({
-      to: booking.client.phone,
-      from: process.env.TWILIO_PHONE_NUMBER,
-      twiml: `<Response><Dial><Conference>${conference.sid}</Conference></Dial></Response>`
-    }),
-    // Call interpreter
-    twilio.calls.create({
-      to: booking.interpreter.users.phone,
-      from: process.env.TWILIO_PHONE_NUMBER,
-      twiml: `<Response><Dial><Conference>${conference.sid}</Conference></Dial></Response>`
-    })
-  ]);
-
-  return conference;
-}
+// Twilio conference functionality removed
 
 async function notifyClient(booking: any, status: 'accepted' | 'declined', session?: any) {
   try {
@@ -259,16 +226,8 @@ async function notifyClient(booking: any, status: 'accepted' | 'declined', sessi
       `
     });
 
-    // Send SMS for urgent accepted bookings
-    if (isAccepted && booking.urgency === 'immediate' && booking.client.phone) {
-      const twilioClient = require('twilio')(process.env.TWILIO_SID, process.env.TWILIO_AUTH_TOKEN);
-      
-      await twilioClient.messages.create({
-        body: `LanguageHelp: Interpreter found! ${session?.joinUrl ? `Join: ${session.joinUrl}` : 'Check your email for session details.'}`,
-        from: process.env.TWILIO_PHONE_NUMBER,
-        to: booking.client.phone
-      });
-    }
+    // SMS notifications disabled for now
+    // TODO: Add SMS notifications when needed
 
   } catch (error) {
     console.error('Client notification error:', error);

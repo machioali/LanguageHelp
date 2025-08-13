@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { verifyJWTToken, hashPassword, verifyPassword } from '@/lib/utils/credentials';
 
+// Force dynamic rendering for this route
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 // POST /api/interpreter/change-password - Change interpreter's password
 export async function POST(request: NextRequest) {
   try {

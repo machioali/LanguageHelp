@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 
+// Force dynamic rendering for this route
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 // Free booking system using JSON file storage (no database costs)
 const BOOKINGS_FILE = path.join(process.cwd(), 'data', 'bookings.json');
 const INTERPRETERS_FILE = path.join(process.cwd(), 'data', 'interpreters.json');

@@ -3,6 +3,10 @@ import { prisma } from '@/lib/prisma';
 import { UserRole } from '@/lib/constants';
 import { getToken } from 'next-auth/jwt';
 
+// Force dynamic rendering for this route
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 // GET /api/admin/users - Get all registered users
 export async function GET(request: NextRequest) {
   try {

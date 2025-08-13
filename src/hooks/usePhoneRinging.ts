@@ -13,7 +13,7 @@ export function usePhoneRinging() {
     incomingCall: null
   });
   
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const audioRef = useRef<HTMLAudioElement | { play: () => void } | null>(null);
   const ringIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   // Initialize audio context
@@ -115,10 +115,11 @@ export function usePhoneRinging() {
     // Start continuous ringing
     const playRingCycle = () => {
       if (audioRef.current) {
-        if ('play' in audioRef.current) {
+        try {
+          // Use any to avoid TypeScript confusion between custom play function and HTMLAudioElement.play
           (audioRef.current as any).play();
-        } else {
-          audioRef.current.play().catch(e => console.log('Could not play ring sound'));
+        } catch (error) {
+          console.log('Could not play ring sound:', error);
         }
       }
     };

@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { verifyJWTToken } from '@/lib/utils/credentials';
 
+// Force dynamic rendering for this route
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 // PUT /api/interpreter/update-profile - Update interpreter's profile
 export async function PUT(request: NextRequest) {
   try {

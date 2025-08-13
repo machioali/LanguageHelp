@@ -36,6 +36,8 @@ const nextConfig = {
   env: {
     NEXTAUTH_URL: process.env.NEXTAUTH_URL,
   },
+  // Skip static optimization for routes that use headers/cookies
+  staticPageGenerationTimeout: 1000,
 }
 
 module.exports = nextConfig

@@ -6,6 +6,10 @@ import { hashPassword } from '@/lib/utils/credentials';
 import { UserRole } from '@/lib/constants';
 import type { UserRoleType } from '@/lib/constants';
 
+// Force dynamic rendering for this route
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 // Validation schema for creating admin users
 const createAdminUserSchema = z.object({
   email: z.string().email('Invalid email address'),

@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { Resend } from 'resend';
-import { Twilio } from 'twilio';
+
+// Force dynamic rendering for this route
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
 
 // Initialize services
 const supabase = createClient(
@@ -10,7 +13,6 @@ const supabase = createClient(
 );
 
 const resend = new Resend(process.env.RESEND_API_KEY);
-const twilio = new Twilio(process.env.TWILIO_SID, process.env.TWILIO_AUTH_TOKEN);
 
 interface BookingRequest {
   sourceLanguage: string;
@@ -190,14 +192,8 @@ async function sendInterpreterNotification(interpreter: any, booking: any) {
       `
     });
 
-    // Send SMS for urgent requests
-    if (booking.urgency === 'immediate' && interpreter.users.phone) {
-      await twilio.messages.create({
-        body: `LanguageHelp: Urgent interpretation request! ${booking.source_language}→${booking.target_language}. Check your app to accept.`,
-        from: process.env.TWILIO_PHONE_NUMBER,
-        to: interpreter.users.phone
-      });
-    }
+    // SMS notifications disabled for now
+    // TODO: Add SMS notifications when needed
 
   } catch (error) {
     console.error('Notification error:', error);
