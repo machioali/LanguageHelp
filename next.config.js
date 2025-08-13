@@ -6,6 +6,10 @@ const nextConfig = {
   experimental: {
     serverComponentsExternalPackages: ['@prisma/client'],
   },
+  // Font optimization settings
+  optimizeFonts: false, // Disable font optimization to avoid network issues
+  // OR try enabling with more lenient settings
+  // optimizeFonts: true,
   async redirects() {
     return [
       {
