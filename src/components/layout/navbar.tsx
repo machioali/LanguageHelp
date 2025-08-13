@@ -262,144 +262,68 @@ export function Navbar() {
         </div>
       </nav>
 
-      {/* Mobile menu */}
+      {/* Mobile menu - Replace entire navbar when open */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 z-[100] lg:hidden">
-          {/* Backdrop */}
-          <div 
-            className="absolute inset-0 bg-black/50" 
-            onClick={() => setMobileMenuOpen(false)}
-          />
-          {/* Mobile menu panel */}
-          <div className="absolute top-0 right-0 h-full w-full bg-white dark:bg-gray-900 shadow-2xl overflow-y-auto p-6" style={{maxWidth: '400px'}}>
-            <div className="flex items-center justify-between mb-6">
-              <Link href="/" className="-m-1.5 p-1.5">
-                <span className="sr-only">LanguageHelp</span>
-                <div className="flex items-center space-x-2">
-                  <Globe className="h-8 w-8 text-primary" />
-                  <span className="text-xl font-bold text-foreground">
-                    LanguageHelp
-                  </span>
-                </div>
-              </Link>
-              <button
-                type="button"
-                className="-m-2.5 rounded-md p-2.5 text-foreground"
+        <div className="lg:hidden fixed inset-0 z-[9999] bg-white">
+          {/* Mobile menu header */}
+          <div className="flex items-center justify-between px-4 py-3 border-b">
+            <Link href="/" className="flex items-center space-x-2" onClick={() => setMobileMenuOpen(false)}>
+              <Globe className="h-8 w-8 text-blue-600" />
+              <span className="text-xl font-bold text-gray-900">LanguageHelp</span>
+            </Link>
+            <button
+              onClick={() => setMobileMenuOpen(false)}
+              className="p-2 rounded-md text-gray-600 hover:bg-gray-100"
+            >
+              <X className="h-6 w-6" />
+            </button>
+          </div>
+          
+          {/* Mobile menu content */}
+          <div className="px-4 py-6 space-y-4">
+            {/* Navigation Links */}
+            <div className="space-y-2">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Navigation</h3>
+              {navigation.map((item) => (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className="block px-4 py-3 text-lg font-medium text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  {item.name}
+                </Link>
+              ))}
+            </div>
+            
+            {/* Action Buttons */}
+            <div className="space-y-3 pt-6 border-t">
+              <Link
+                href="/auth/signin"
+                className="block w-full px-4 py-3 text-lg font-semibold text-center text-gray-900 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                <span className="sr-only">Close menu</span>
-                <X className="h-6 w-6" aria-hidden="true" />
-              </button>
+                Sign In
+              </Link>
+              <Link
+                href="/book"
+                className="block w-full px-4 py-3 text-lg font-semibold text-center text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Start Interpreting
+              </Link>
             </div>
-            <div className="mt-6">
-              <div className="space-y-6">
-                {/* User Profile Section for Mobile */}
-                {session && (
-                  <div className="py-6 border-b border-border">
-                    <div className="flex items-center space-x-3 px-3">
-                      <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-primary to-primary/80 text-primary-foreground">
-                        <User className="h-5 w-5" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-foreground truncate">
-                          {session.user?.name || 'User'}
-                        </p>
-                        <p className="text-xs text-muted-foreground truncate">
-                          {session.user?.email}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                <div className="space-y-1 py-6">
-                  {isClientSignedIn ? (
-                    // Dashboard links for signed-in clients
-                    <>
-                      <Link
-                        href="/dashboard"
-                        className="-mx-3 flex items-center rounded-lg px-3 py-3 text-base font-semibold leading-6 text-foreground hover:bg-accent transition-colors"
-                        onClick={() => setMobileMenuOpen(false)}
-                      >
-                        <Settings className="h-5 w-5 mr-3 text-muted-foreground" />
-                        Dashboard
-                      </Link>
-                      <Link
-                        href="/book"
-                        className="-mx-3 flex items-center rounded-lg px-3 py-3 text-base font-semibold leading-6 text-foreground hover:bg-accent transition-colors"
-                        onClick={() => setMobileMenuOpen(false)}
-                      >
-                        <Calendar className="h-5 w-5 mr-3 text-muted-foreground" />
-                        Book Session
-                      </Link>
-                    </>
-                  ) : (
-                    // Full navigation for non-clients or signed-out users
-                    navigation.map((item) => (
-                      <Link
-                        key={item.name}
-                        href={item.href}
-                        className="-mx-3 block rounded-lg px-3 py-4 text-lg font-semibold text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                        onClick={() => setMobileMenuOpen(false)}
-                      >
-                        {item.name}
-                      </Link>
-                    ))
-                  )}
-                </div>
-                <div className="py-6">
-                  {/* Theme toggle for mobile */}
-                  <div className="-mx-3 flex items-center justify-between px-3 py-2.5 text-base font-semibold leading-7 text-foreground">
-                    <span>Theme</span>
-                    <button
-                      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                      className="p-2 rounded-md hover:bg-accent transition-colors relative w-9 h-9 flex items-center justify-center"
-                      aria-label="Toggle theme"
-                    >
-                      <Sun className="h-5 w-5 absolute rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-                      <Moon className="h-5 w-5 absolute rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-                      <span className="sr-only">Toggle theme</span>
-                    </button>
-                  </div>
-                  
-                  {session ? (
-                    <div className="space-y-2">
-                      <Link
-                        href="/dashboard"
-                        className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-foreground hover:bg-accent"
-                        onClick={() => setMobileMenuOpen(false)}
-                      >
-                        Dashboard
-                      </Link>
-                      <button
-                        onClick={() => {
-                          customSignOut();
-                          setMobileMenuOpen(false);
-                        }}
-                        className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-foreground hover:bg-accent w-full text-left"
-                      >
-                        Sign Out
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="space-y-3">
-                      <Link
-                        href="/auth/signin"
-                        className="-mx-3 block rounded-lg px-4 py-3 text-lg font-semibold text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-center"
-                        onClick={() => setMobileMenuOpen(false)}
-                      >
-                        Sign In
-                      </Link>
-                      <Link
-                        href="/book"
-                        className="-mx-3 block rounded-lg px-4 py-3 text-lg font-semibold bg-blue-600 text-white hover:bg-blue-700 transition-colors text-center"
-                        onClick={() => setMobileMenuOpen(false)}
-                      >
-                        Start Interpreting
-                      </Link>
-                    </div>
-                  )}
-                </div>
+            
+            {/* Theme Toggle */}
+            <div className="pt-6 border-t">
+              <div className="flex items-center justify-between">
+                <span className="text-lg font-medium text-gray-900">Dark Mode</span>
+                <button
+                  onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                  className="p-2 rounded-md text-gray-600 hover:bg-gray-100"
+                >
+                  {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+                </button>
               </div>
             </div>
           </div>
