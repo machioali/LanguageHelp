@@ -7,6 +7,7 @@ export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
 // GET /api/interpreter/auth-check - Simple auth check for debugging
+// Updated for Vercel deployment compatibility
 export async function GET(request: NextRequest) {
   try {
     console.log('🔍 Auth check API called');
