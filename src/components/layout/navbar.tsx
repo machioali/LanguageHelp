@@ -291,8 +291,8 @@ export function Navbar() {
                 <X className="h-6 w-6" aria-hidden="true" />
               </button>
             </div>
-            <div className="mt-6 flow-root">
-              <div className="-my-6 divide-y divide-border">
+            <div className="mt-6">
+              <div className="space-y-6">
                 {/* User Profile Section for Mobile */}
                 {session && (
                   <div className="py-6 border-b border-border">
@@ -339,7 +339,7 @@ export function Navbar() {
                       <Link
                         key={item.name}
                         href={item.href}
-                        className="-mx-3 block rounded-lg px-3 py-3 text-base font-semibold leading-6 text-foreground hover:bg-accent transition-colors touch-manipulation"
+                        className="-mx-3 block rounded-lg px-3 py-4 text-lg font-semibold text-gray-900 dark:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                         onClick={() => setMobileMenuOpen(false)}
                       >
                         {item.name}
@@ -382,17 +382,17 @@ export function Navbar() {
                       </button>
                     </div>
                   ) : (
-                    <div className="space-y-2">
+                    <div className="space-y-3">
                       <Link
                         href="/auth/signin"
-                        className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-foreground hover:bg-accent"
+                        className="-mx-3 block rounded-lg px-4 py-3 text-lg font-semibold text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-center"
                         onClick={() => setMobileMenuOpen(false)}
                       >
                         Sign In
                       </Link>
                       <Link
                         href="/book"
-                        className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 bg-primary text-primary-foreground hover:bg-primary/90"
+                        className="-mx-3 block rounded-lg px-4 py-3 text-lg font-semibold bg-blue-600 text-white hover:bg-blue-700 transition-colors text-center"
                         onClick={() => setMobileMenuOpen(false)}
                       >
                         Start Interpreting
