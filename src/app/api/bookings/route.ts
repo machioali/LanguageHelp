@@ -6,13 +6,26 @@ import { Resend } from 'resend';
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
-// Initialize services
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+// Lazy initialization to prevent build-time errors
+function getSupabaseClient() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  
+  if (!supabaseUrl || !supabaseKey) {
+    throw new Error('Missing Supabase environment variables');
+  }
+  
+  return createClient(supabaseUrl, supabaseKey);
+}
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+function getResendClient() {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
+    console.warn('RESEND_API_KEY not configured, email notifications disabled');
+    return null;
+  }
+  return new Resend(apiKey);
+}
 
 interface BookingRequest {
   sourceLanguage: string;
@@ -36,6 +49,8 @@ export async function POST(request: NextRequest) {
     if (!clientId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+
+    const supabase = getSupabaseClient();
 
     // Find available interpreters for the language pair
     const { data: interpreters } = await supabase
@@ -118,6 +133,8 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
+  const supabase = getSupabaseClient();
+
   let query = supabase.from('booking_requests').select(`
     id, source_language, target_language, session_type,
     scheduled_at, duration_minutes, status, urgency,
@@ -161,6 +178,9 @@ async function filterOnlineInterpreters(interpreters: any[]) {
 
 async function sendInterpreterNotification(interpreter: any, booking: any) {
   try {
+    const supabase = getSupabaseClient();
+    const resend = getResendClient();
+    
     // Create notification record
     await supabase.from('notifications').insert({
       user_id: interpreter.user_id,
@@ -171,26 +191,28 @@ async function sendInterpreterNotification(interpreter: any, booking: any) {
     });
 
     // Send email notification
-    await resend.emails.send({
-      from: 'LanguageHelp <notifications@languagehelp.com>',
-      to: interpreter.users.email,
-      subject: '🔔 New Interpretation Request',
-      html: `
-        <div>
-          <h2>New Interpretation Request</h2>
-          <p><strong>Languages:</strong> ${booking.source_language} → ${booking.target_language}</p>
-          <p><strong>Type:</strong> ${booking.session_type}</p>
-          <p><strong>Urgency:</strong> ${booking.urgency}</p>
-          <p><strong>Duration:</strong> ${booking.duration_minutes} minutes</p>
-          <p><strong>Price:</strong> $${booking.price}</p>
-          
-          <a href="${process.env.NEXT_PUBLIC_APP_URL}/interpreter/bookings/${booking.id}" 
-             style="background: #4F46E5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
-            View Request
-          </a>
-        </div>
-      `
-    });
+    if (resend) {
+      await resend.emails.send({
+        from: 'LanguageHelp <notifications@languagehelp.com>',
+        to: interpreter.users.email,
+        subject: '🔔 New Interpretation Request',
+        html: `
+          <div>
+            <h2>New Interpretation Request</h2>
+            <p><strong>Languages:</strong> ${booking.source_language} → ${booking.target_language}</p>
+            <p><strong>Type:</strong> ${booking.session_type}</p>
+            <p><strong>Urgency:</strong> ${booking.urgency}</p>
+            <p><strong>Duration:</strong> ${booking.duration_minutes} minutes</p>
+            <p><strong>Price:</strong> $${booking.price}</p>
+            
+            <a href="${process.env.NEXT_PUBLIC_APP_URL}/interpreter/bookings/${booking.id}" 
+               style="background: #4F46E5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
+              View Request
+            </a>
+          </div>
+        `
+      });
+    }
 
     // SMS notifications disabled for now
     // TODO: Add SMS notifications when needed
