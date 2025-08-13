@@ -1,4 +1,6 @@
-# LanguageHelp Platform 🌍
+# LanguageHelp
+
+🚀 **Latest Update**: Fixed Vercel deployment issues with lazy Supabase client initialization
 
 **Live Language Interpretation Platform** - Production Ready
 
