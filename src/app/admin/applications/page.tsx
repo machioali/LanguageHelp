@@ -147,7 +147,7 @@ export default function ApplicationsPage() {
     }
   };
 
-  const departments = [...new Set(applications.map(app => app.department))];
+  const departments = Array.from(new Set(applications.map(app => app.department)));
   const stats = {
     total: applications.length,
     pending: applications.filter(app => app.status === 'pending').length,
