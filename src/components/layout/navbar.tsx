@@ -33,6 +33,11 @@ const navigation = [
 
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  
+  // Debug: Log state changes
+  useEffect(() => {
+    console.log('Mobile menu state changed:', mobileMenuOpen);
+  }, [mobileMenuOpen]);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const { theme, setTheme } = useTheme();
   const { data: session } = useSession();

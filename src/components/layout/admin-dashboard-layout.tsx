@@ -10,13 +10,12 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import { Input } from '@/components/ui/input';
 import {
   Home,
-  Calendar,
-  User,
-  CreditCard,
-  Settings,
-  BarChart3,
+  Users,
+  UserPlus,
+  Shield,
   FileText,
-  MessageSquare,
+  BarChart3,
+  Settings,
   LogOut,
   Bell,
   Menu,
@@ -25,28 +24,35 @@ import {
   Globe,
   HelpCircle,
   Moon,
-  Sun
+  Sun,
+  Plus,
+  Database,
+  Activity,
+  AlertTriangle,
+  Briefcase
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { useTheme } from 'next-themes';
 
-interface ClientDashboardLayoutProps {
+interface AdminDashboardLayoutProps {
   children: React.ReactNode;
 }
 
 const navigation = [
-  { name: 'Dashboard', href: '/dashboard', icon: Home },
-  { name: 'Book Session', href: '/dashboard/book-session', icon: Calendar },
-  { name: 'My Sessions', href: '/dashboard/sessions', icon: MessageSquare },
-  { name: 'Documents', href: '/dashboard/documents', icon: FileText },
-  { name: 'Analytics', href: '/dashboard/analytics', icon: BarChart3 },
-  { name: 'Profile', href: '/dashboard/profile', icon: User },
-  { name: 'Subscription', href: '/dashboard/subscription', icon: CreditCard },
-  { name: 'Settings', href: '/dashboard/settings', icon: Settings },
+  { name: 'Dashboard', href: '/admin/dashboard', icon: Home },
+  { name: 'Users', href: '/admin/users', icon: Users },
+  { name: 'Job Management', href: '/admin/jobs', icon: Briefcase },
+  { name: 'Applications', href: '/admin/applications', icon: FileText },
+  { name: 'Create Admin', href: '/admin/create-admin', icon: Shield },
+  { name: 'Create Interpreter', href: '/admin/create-interpreter', icon: UserPlus },
+  { name: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
+  { name: 'System Health', href: '/admin/system', icon: Activity },
+  { name: 'Reports', href: '/admin/reports', icon: Database },
+  { name: 'Settings', href: '/admin/settings', icon: Settings },
 ];
 
-export function ClientDashboardLayout({ children }: ClientDashboardLayoutProps) {
+export function AdminDashboardLayout({ children }: AdminDashboardLayoutProps) {
   const pathname = usePathname();
   const { data: session } = useSession();
   const { theme, setTheme } = useTheme();
@@ -73,7 +79,10 @@ export function ClientDashboardLayout({ children }: ClientDashboardLayoutProps) 
           </div>
           <div className="h-0 flex-1 overflow-y-auto pb-4 pt-5">
             <div className="flex flex-shrink-0 items-center px-4">
-              <h1 className="text-xl font-bold text-gray-900 dark:text-white">LanguageHelp</h1>
+              <div className="flex items-center space-x-2">
+                <Shield className="h-6 w-6 text-primary" />
+                <h1 className="text-xl font-bold text-gray-900 dark:text-white">Admin Panel</h1>
+              </div>
             </div>
             <nav className="mt-5 space-y-1 px-2">
               {navigation.map((item) => {
@@ -108,7 +117,10 @@ export function ClientDashboardLayout({ children }: ClientDashboardLayoutProps) 
       <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col">
         <div className="flex flex-grow flex-col overflow-y-auto border-r border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800 pt-5">
           <div className="flex flex-shrink-0 items-center px-4">
-            <h1 className="text-xl font-bold text-gray-900 dark:text-white">LanguageHelp</h1>
+            <div className="flex items-center space-x-2">
+              <Shield className="h-6 w-6 text-primary" />
+              <h1 className="text-xl font-bold text-gray-900 dark:text-white">Admin Panel</h1>
+            </div>
           </div>
           <div className="mt-5 flex flex-grow flex-col">
             <nav className="flex-1 space-y-1 px-2 pb-4">
@@ -136,6 +148,19 @@ export function ClientDashboardLayout({ children }: ClientDashboardLayoutProps) 
                 );
               })}
             </nav>
+
+            {/* Admin Panel Info */}
+            <div className="px-2 pb-4">
+              <div className="bg-gradient-to-r from-primary/10 to-secondary/10 rounded-lg p-3">
+                <div className="flex items-center space-x-2 mb-2">
+                  <AlertTriangle className="h-4 w-4 text-primary" />
+                  <span className="text-xs font-medium text-gray-900 dark:text-gray-100">Admin Access</span>
+                </div>
+                <p className="text-xs text-gray-600 dark:text-gray-400">
+                  You have full administrative privileges. Use with caution.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -156,9 +181,9 @@ export function ClientDashboardLayout({ children }: ClientDashboardLayoutProps) 
               </button>
               
               {/* Logo and brand name for mobile */}
-              <Link href="/dashboard" className="flex items-center space-x-2 lg:hidden">
-                <Globe className="h-6 w-6 text-primary" />
-                <span className="text-lg font-bold text-gray-900 dark:text-white">LanguageHelp</span>
+              <Link href="/admin/dashboard" className="flex items-center space-x-2 lg:hidden">
+                <Shield className="h-6 w-6 text-primary" />
+                <span className="text-lg font-bold text-gray-900 dark:text-white">Admin Panel</span>
               </Link>
             </div>
 
@@ -168,7 +193,7 @@ export function ClientDashboardLayout({ children }: ClientDashboardLayoutProps) 
                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
                 <Input
                   type="search"
-                  placeholder="Search sessions, documents..."
+                  placeholder="Search users, applications..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-9 pr-4 py-2 w-full bg-gray-50/50 border-gray-200/50 focus:bg-white focus:border-primary/30 dark:bg-gray-700/50 dark:border-gray-600/50 dark:focus:bg-gray-700"
@@ -178,6 +203,39 @@ export function ClientDashboardLayout({ children }: ClientDashboardLayoutProps) 
 
             {/* Right section - Actions */}
             <div className="flex items-center space-x-2">
+              {/* Quick Actions */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-9 w-9 p-0 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  >
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem asChild>
+                    <Link href="/admin/jobs" className="flex items-center">
+                      <Briefcase className="mr-2 h-4 w-4" />
+                      Manage Jobs
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/admin/create-interpreter" className="flex items-center">
+                      <UserPlus className="mr-2 h-4 w-4" />
+                      Create Interpreter
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/admin/create-admin" className="flex items-center">
+                      <Shield className="mr-2 h-4 w-4" />
+                      Create Admin
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
               {/* Theme toggle */}
               <Button
                 variant="ghost"
@@ -207,7 +265,7 @@ export function ClientDashboardLayout({ children }: ClientDashboardLayoutProps) 
               >
                 <Bell className="h-4 w-4" />
                 <Badge className="absolute -right-1 -top-1 h-5 w-5 p-0 text-xs bg-red-500 hover:bg-red-500">
-                  3
+                  5
                 </Badge>
               </Button>
 
@@ -218,7 +276,7 @@ export function ClientDashboardLayout({ children }: ClientDashboardLayoutProps) 
                     <Avatar className="h-8 w-8">
                       <AvatarImage src={session?.user?.image || ''} alt={session?.user?.name || ''} />
                       <AvatarFallback className="text-sm bg-gradient-to-br from-primary to-primary/80">
-                        {session?.user?.name?.[0] || 'U'}
+                        {session?.user?.name?.[0] || 'A'}
                       </AvatarFallback>
                     </Avatar>
                   </Button>
@@ -229,18 +287,18 @@ export function ClientDashboardLayout({ children }: ClientDashboardLayoutProps) 
                     <Avatar className="h-10 w-10">
                       <AvatarImage src={session?.user?.image || ''} alt={session?.user?.name || ''} />
                       <AvatarFallback className="bg-gradient-to-br from-primary to-primary/80">
-                        {session?.user?.name?.[0] || 'U'}
+                        {session?.user?.name?.[0] || 'A'}
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate">
-                        {session?.user?.name || 'User'}
+                        {session?.user?.name || 'Admin'}
                       </p>
                       <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
                         {session?.user?.email}
                       </p>
-                      <Badge variant="secondary" className="text-xs mt-1">
-                        Client
+                      <Badge variant="secondary" className="text-xs mt-1 bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400">
+                        Administrator
                       </Badge>
                     </div>
                   </div>
@@ -250,21 +308,21 @@ export function ClientDashboardLayout({ children }: ClientDashboardLayoutProps) 
                   {/* Quick Actions */}
                   <div className="space-y-1">
                     <DropdownMenuItem asChild>
-                      <Link href="/dashboard/profile" className="flex items-center px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700">
-                        <User className="mr-3 h-4 w-4 text-gray-500" />
-                        <span>My Profile</span>
+                      <Link href="/admin/profile" className="flex items-center px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <Shield className="mr-3 h-4 w-4 text-gray-500" />
+                        <span>Admin Profile</span>
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link href="/dashboard/settings" className="flex items-center px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700">
+                      <Link href="/admin/settings" className="flex items-center px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700">
                         <Settings className="mr-3 h-4 w-4 text-gray-500" />
-                        <span>Settings</span>
+                        <span>System Settings</span>
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link href="/dashboard/subscription" className="flex items-center px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700">
-                        <CreditCard className="mr-3 h-4 w-4 text-gray-500" />
-                        <span>Billing</span>
+                      <Link href="/admin/system" className="flex items-center px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <Activity className="mr-3 h-4 w-4 text-gray-500" />
+                        <span>System Health</span>
                       </Link>
                     </DropdownMenuItem>
                   </div>

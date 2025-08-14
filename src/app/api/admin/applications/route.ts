@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { ApplicationStatus } from '@/lib/constants';
+import { ApplicationStatus, UserRole } from '@/lib/constants';
+import { getToken } from 'next-auth/jwt';
 
 // Force dynamic rendering for this route
 export const dynamic = 'force-dynamic';
@@ -9,6 +10,15 @@ export const runtime = 'nodejs';
 // GET /api/admin/applications - Get all interpreter applications
 export async function GET(request: NextRequest) {
   try {
+    // Check authentication
+    const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
+    
+    if (!token || token.role !== UserRole.ADMIN) {
+      return NextResponse.json(
+        { error: 'Unauthorized. Admin access required.' },
+        { status: 401 }
+      );
+    }
     const { searchParams } = new URL(request.url);
     const status = searchParams.get('status');
     const page = parseInt(searchParams.get('page') || '1');

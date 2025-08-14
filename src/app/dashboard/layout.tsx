@@ -1,11 +1,13 @@
+import { ClientDashboardLayout } from '@/components/layout/client-dashboard-layout';
+
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <div className="dashboard-layout">
+    <ClientDashboardLayout>
       {children}
-    </div>
+    </ClientDashboardLayout>
   );
 }

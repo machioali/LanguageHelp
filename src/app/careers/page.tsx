@@ -385,11 +385,18 @@ export default function CareersPage() {
                       ))}
                     </div>
                   </div>
-                  <div className="pt-2">
-                    <Button className="group-hover:bg-primary/90 transition-colors duration-300">
-                      Apply Now
-                      <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
-                    </Button>
+                  <div className="pt-2 flex gap-2 relative z-10">
+                    <Link href={`/careers/${position.title.toLowerCase().replace(/\s+/g, '-')}`} className="flex-1">
+                      <Button className="w-full group-hover:bg-primary/90 transition-colors duration-300">
+                        View Details
+                        <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
+                      </Button>
+                    </Link>
+                    <Link href={`/careers/${position.title.toLowerCase().replace(/\s+/g, '-')}/apply`}>
+                      <Button variant="outline" className="group-hover:border-primary/50 transition-colors duration-300">
+                        Apply Now
+                      </Button>
+                    </Link>
                   </div>
                 </CardContent>
               </Card>
