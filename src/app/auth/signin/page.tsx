@@ -124,7 +124,7 @@ const SignInPage = () => {
               <Checkbox 
                 id="remember" 
                 checked={rememberMe}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setRememberMe(e.target.checked)}
+                onCheckedChange={(checked) => setRememberMe(checked === true)}
               />
               <Label htmlFor="remember" className="text-sm font-normal">Remember me for 30 days</Label>
             </div>

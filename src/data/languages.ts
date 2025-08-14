@@ -217,7 +217,7 @@ export const getLanguagesByCategory = () => {
 };
 
 export const getLanguagesByRegion = () => {
-  const regions = [...new Set(languages.map(lang => lang.region))];
+  const regions = Array.from(new Set(languages.map(lang => lang.region)));
   return regions.reduce((acc, region) => {
     acc[region] = languages.filter(lang => lang.region === region);
     return acc;

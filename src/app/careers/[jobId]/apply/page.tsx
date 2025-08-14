@@ -296,17 +296,26 @@ const commonLanguages = [
 ];
 
 export default function JobApplicationPage() {
-  const params = useParams();
-  const jobId = params.jobId as string;
+  const params = useParams() as { jobId?: string };
+  const jobId = params?.jobId;
   const [job, setJob] = useState<any>(null);
   const [formData, setFormData] = useState<any>({});
   const [errors, setErrors] = useState<any>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
+    if (!jobId) return;
     const jobKey = jobId.toLowerCase().replace(/\s+/g, '-');
     setJob(jobData[jobKey as keyof typeof jobData]);
   }, [jobId]);
+
+  if (!jobId) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p>Loading...</p>
+      </div>
+    );
+  }
 
   const handleInputChange = (field: string, value: any) => {
     setFormData((prev: any) => ({ ...prev, [field]: value }));
@@ -638,9 +647,9 @@ export default function JobApplicationPage() {
                         <Checkbox
                           id={`lang-${language}`}
                           checked={formData.secondaryLanguages?.includes(language) || false}
-                          onCheckedChange={(checked) => {
+onCheckedChange={(checked) => {
                             const current = formData.secondaryLanguages || [];
-                            if (checked) {
+                            if (checked === true) {
                               handleInputChange("secondaryLanguages", [...current, language]);
                             } else {
                               handleInputChange("secondaryLanguages", current.filter((l: string) => l !== language));
@@ -871,9 +880,9 @@ export default function JobApplicationPage() {
                             <Checkbox
                               id={`${question.id}-${option}`}
                               checked={formData[question.id]?.includes(option) || false}
-                              onCheckedChange={(checked) => {
+onCheckedChange={(checked) => {
                                 const current = formData[question.id] || [];
-                                if (checked) {
+                                if (checked === true) {
                                   handleInputChange(question.id, [...current, option]);
                                 } else {
                                   handleInputChange(question.id, current.filter((o: string) => o !== option));
@@ -917,7 +926,7 @@ export default function JobApplicationPage() {
                   <Checkbox
                     id="terms"
                     checked={formData.terms || false}
-                    onCheckedChange={(checked) => handleInputChange("terms", checked)}
+onCheckedChange={(checked) => handleInputChange("terms", checked === true)}
                     className={errors.terms ? "border-red-500" : ""}
                   />
                   <Label htmlFor="terms" className="text-sm leading-relaxed cursor-pointer">

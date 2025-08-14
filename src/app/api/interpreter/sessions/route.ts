@@ -60,7 +60,7 @@ export async function GET(request: NextRequest) {
     
     // Calculate date range based on dateRange parameter
     const today = new Date();
-    let startDate = new Date();
+    const startDate = new Date();
     
     switch (dateRange) {
       case 'last7days':
@@ -83,7 +83,7 @@ export async function GET(request: NextRequest) {
     const interpreterProfileId = interpreter.interpreterProfile.id;
     
     // Fetch sessions from database within the date range
-    let sessions = await prisma.interpreterSession.findMany({
+    const sessions = await prisma.interpreterSession.findMany({
       where: {
         interpreterProfileId,
         scheduledAt: {

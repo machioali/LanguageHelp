@@ -118,13 +118,15 @@ interface Job {
   location: string;
   payRange: string;
   status: string;
+  applications?: number;
+  posted?: string;
   description: string;
-  longDescription: string;
-  responsibilities: string[];
-  requirements: string[];
-  benefits: string[];
+  longDescription?: string;
+  responsibilities?: string[];
+  requirements?: string[];
+  benefits?: string[];
   deadline: string;
-  questions: ApplicationQuestion[];
+  questions?: ApplicationQuestion[];
 }
 
 interface ApplicationQuestion {
@@ -180,7 +182,12 @@ export default function AdminJobsPage() {
 
   const handleUpdateJob = () => {
     if (selectedJob) {
-      setJobs(jobs.map(job => job.id === selectedJob.id ? { ...currentJob, id: selectedJob.id } : job));
+      setJobs(jobs.map(job => job.id === selectedJob.id ? { 
+        ...currentJob, 
+        id: selectedJob.id,
+        applications: job.applications,
+        posted: job.posted
+      } : job));
       setIsEditDialogOpen(false);
       resetForm();
     }
@@ -234,21 +241,21 @@ export default function AdminJobsPage() {
   const addArrayField = (field: keyof Job, value: string = "") => {
     setCurrentJob(prev => ({
       ...prev,
-      [field]: [...(prev[field] as string[]), value]
+      [field]: [...(prev[field] as string[] || []), value]
     }));
   };
 
   const updateArrayField = (field: keyof Job, index: number, value: string) => {
     setCurrentJob(prev => ({
       ...prev,
-      [field]: (prev[field] as string[]).map((item, i) => i === index ? value : item)
+      [field]: (prev[field] as string[] || []).map((item, i) => i === index ? value : item)
     }));
   };
 
   const removeArrayField = (field: keyof Job, index: number) => {
     setCurrentJob(prev => ({
       ...prev,
-      [field]: (prev[field] as string[]).filter((_, i) => i !== index)
+      [field]: (prev[field] as string[] || []).filter((_, i) => i !== index)
     }));
   };
 
@@ -262,14 +269,14 @@ export default function AdminJobsPage() {
     };
     setCurrentJob(prev => ({
       ...prev,
-      questions: [...prev.questions, newQuestion]
+      questions: [...(prev.questions || []), newQuestion]
     }));
   };
 
   const updateQuestion = (questionId: string, updates: Partial<ApplicationQuestion>) => {
     setCurrentJob(prev => ({
       ...prev,
-      questions: prev.questions.map(q => 
+      questions: (prev.questions || []).map(q => 
         q.id === questionId ? { ...q, ...updates } : q
       )
     }));
@@ -278,14 +285,14 @@ export default function AdminJobsPage() {
   const removeQuestion = (questionId: string) => {
     setCurrentJob(prev => ({
       ...prev,
-      questions: prev.questions.filter(q => q.id !== questionId)
+      questions: (prev.questions || []).filter(q => q.id !== questionId)
     }));
   };
 
   const addQuestionOption = (questionId: string) => {
     setCurrentJob(prev => ({
       ...prev,
-      questions: prev.questions.map(q => 
+      questions: (prev.questions || []).map(q => 
         q.id === questionId ? { ...q, options: [...q.options, ""] } : q
       )
     }));
@@ -294,7 +301,7 @@ export default function AdminJobsPage() {
   const updateQuestionOption = (questionId: string, optionIndex: number, value: string) => {
     setCurrentJob(prev => ({
       ...prev,
-      questions: prev.questions.map(q => 
+      questions: (prev.questions || []).map(q => 
         q.id === questionId ? {
           ...q,
           options: q.options.map((opt, i) => i === optionIndex ? value : opt)
@@ -306,7 +313,7 @@ export default function AdminJobsPage() {
   const removeQuestionOption = (questionId: string, optionIndex: number) => {
     setCurrentJob(prev => ({
       ...prev,
-      questions: prev.questions.map(q => 
+      questions: (prev.questions || []).map(q => 
         q.id === questionId ? {
           ...q,
           options: q.options.filter((_, i) => i !== optionIndex)
@@ -451,7 +458,7 @@ export default function AdminJobsPage() {
           <CardTitle className="text-lg">Key Responsibilities</CardTitle>
         </CardHeader>
         <CardContent>
-          {currentJob.responsibilities.map((responsibility, index) => (
+          {(currentJob.responsibilities || []).map((responsibility, index) => (
             <div key={index} className="flex gap-2 mb-2">
               <Input
                 value={responsibility}
@@ -463,7 +470,7 @@ export default function AdminJobsPage() {
                 variant="outline"
                 size="sm"
                 onClick={() => removeArrayField('responsibilities', index)}
-                disabled={currentJob.responsibilities.length === 1}
+                disabled={(currentJob.responsibilities || []).length === 1}
               >
                 <X className="h-4 w-4" />
               </Button>
@@ -488,7 +495,7 @@ export default function AdminJobsPage() {
           <CardTitle className="text-lg">Requirements</CardTitle>
         </CardHeader>
         <CardContent>
-          {currentJob.requirements.map((requirement, index) => (
+          {(currentJob.requirements || []).map((requirement, index) => (
             <div key={index} className="flex gap-2 mb-2">
               <Input
                 value={requirement}
@@ -500,7 +507,7 @@ export default function AdminJobsPage() {
                 variant="outline"
                 size="sm"
                 onClick={() => removeArrayField('requirements', index)}
-                disabled={currentJob.requirements.length === 1}
+                disabled={(currentJob.requirements || []).length === 1}
               >
                 <X className="h-4 w-4" />
               </Button>
@@ -525,7 +532,7 @@ export default function AdminJobsPage() {
           <CardTitle className="text-lg">Benefits & Perks</CardTitle>
         </CardHeader>
         <CardContent>
-          {currentJob.benefits.map((benefit, index) => (
+          {(currentJob.benefits || []).map((benefit, index) => (
             <div key={index} className="flex gap-2 mb-2">
               <Input
                 value={benefit}
@@ -537,7 +544,7 @@ export default function AdminJobsPage() {
                 variant="outline"
                 size="sm"
                 onClick={() => removeArrayField('benefits', index)}
-                disabled={currentJob.benefits.length === 1}
+                disabled={(currentJob.benefits || []).length === 1}
               >
                 <X className="h-4 w-4" />
               </Button>
@@ -565,7 +572,7 @@ export default function AdminJobsPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {currentJob.questions.map((question, index) => (
+          {(currentJob.questions || []).map((question, index) => (
             <Card key={question.id} className="mb-4">
               <CardContent className="pt-4">
                 <div className="space-y-4">

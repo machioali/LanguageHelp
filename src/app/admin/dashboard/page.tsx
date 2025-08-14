@@ -154,7 +154,7 @@ export default function AdminDashboard() {
       }
       
       // Convert job applications to admin dashboard format
-      const convertedApplications = jobApplications.map((app: any) => ({
+      const convertedApplications: Application[] = jobApplications.map((app: any) => ({
         id: app.id,
         firstName: app.personalInfo.firstName,
         lastName: app.personalInfo.lastName,
@@ -177,7 +177,7 @@ export default function AdminDashboard() {
       // Filter applications based on status
       let filteredApps = convertedApplications;
       if (statusFilter && statusFilter !== "ALL") {
-        filteredApps = convertedApplications.filter(app => app.status === statusFilter);
+        filteredApps = convertedApplications.filter((app: Application) => app.status === statusFilter);
       }
       
       setApplications(filteredApps);

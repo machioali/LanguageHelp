@@ -226,10 +226,10 @@ const SignUpPage = () => {
               />
             </div>
             <div className="flex items-center space-x-2">
-              <Checkbox 
+            <Checkbox 
                 id="terms" 
                 checked={agreedToTerms}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAgreedToTerms(e.target.checked)}
+                onCheckedChange={(checked) => setAgreedToTerms(checked === true)}
                 required 
               />
               <Label htmlFor="terms" className="text-sm font-normal">

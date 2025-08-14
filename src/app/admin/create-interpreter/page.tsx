@@ -354,7 +354,7 @@ ${result.credentials.instructions.map((inst: string, i: number) => `${i + 1}. ${
                     <Checkbox
                       id={`native-${index}`}
                       checked={lang.isNative}
-                      onChange={(e) => updateLanguage(index, 'isNative', e.target.checked)}
+                      onCheckedChange={(checked) => updateLanguage(index, 'isNative', checked === true)}
                     />
                     <Label htmlFor={`native-${index}`}>Native speaker</Label>
                   </div>
@@ -394,7 +394,7 @@ ${result.credentials.instructions.map((inst: string, i: number) => `${i + 1}. ${
                   <div className="flex items-center space-x-2">
                     <Checkbox
                       checked={selectedSpecializations.includes(spec)}
-                      onChange={() => {}} // Handled by div onClick
+                      onCheckedChange={() => {}} // Handled by div onClick
                     />
                     <Label className="cursor-pointer">{spec}</Label>
                   </div>
@@ -527,7 +527,7 @@ ${result.credentials.instructions.map((inst: string, i: number) => `${i + 1}. ${
                     <Checkbox
                       id={`verified-${index}`}
                       checked={cert.isVerified}
-                      onChange={(e) => updateCertification(index, 'isVerified', e.target.checked)}
+                      onCheckedChange={(checked) => updateCertification(index, 'isVerified', checked === true)}
                     />
                     <Label htmlFor={`verified-${index}`}>Verified</Label>
                   </div>
@@ -554,7 +554,7 @@ ${result.credentials.instructions.map((inst: string, i: number) => `${i + 1}. ${
               <Checkbox
                 id="sendCredentials"
                 checked={formData.sendCredentials}
-                onChange={(e) => setFormData({...formData, sendCredentials: e.target.checked})}
+                onCheckedChange={(checked) => setFormData({...formData, sendCredentials: checked === true})}
               />
               <Label htmlFor="sendCredentials">Include login credentials in response</Label>
             </div>
@@ -562,7 +562,7 @@ ${result.credentials.instructions.map((inst: string, i: number) => `${i + 1}. ${
               <Checkbox
                 id="autoApprove"
                 checked={formData.autoApprove}
-                onChange={(e) => setFormData({...formData, autoApprove: e.target.checked})}
+                onCheckedChange={(checked) => setFormData({...formData, autoApprove: checked === true})}
               />
               <Label htmlFor="autoApprove">Auto-approve this interpreter</Label>
             </div>

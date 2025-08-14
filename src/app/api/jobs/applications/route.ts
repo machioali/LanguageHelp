@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 // In a real application, this would interact with a database
-let applications: any[] = [];
+const applications: any[] = [];
 
 export async function POST(request: NextRequest) {
   try {

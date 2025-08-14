@@ -90,7 +90,7 @@ export default function BookSessionPage() {
       popular: searchResults.filter(lang => lang.category === 'popular'),
       common: searchResults.filter(lang => lang.category === 'common'),
       specialized: searchResults.filter(lang => lang.category === 'specialized'),
-      regional: searchResults.filter(lang => lang.category === 'regional')
+      rare: searchResults.filter(lang => lang.category === 'rare')
     };
     return grouped;
   }, [toLanguageSearch]);
@@ -310,7 +310,7 @@ export default function BookSessionPage() {
                     <h3 className="text-lg font-semibold text-blue-800 dark:text-blue-200">200+ Languages Supported</h3>
                   </div>
                   <p className="text-sm text-blue-700 dark:text-blue-300">
-                    Choose from our extensive collection of languages including popular, specialized, regional, and sign languages
+                    Choose from our extensive collection of languages including popular, specialized, rare, and sign languages
                   </p>
                   <div className="flex flex-wrap justify-center gap-2 mt-3">
                     <Badge className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
@@ -323,7 +323,7 @@ export default function BookSessionPage() {
                     </Badge>
                     <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
                       <MapPin className="w-3 h-3 mr-1" />
-                      Regional Languages
+                      Rare Languages
                     </Badge>
                   </div>
                 </div>
@@ -663,17 +663,17 @@ export default function BookSessionPage() {
                           </>
                         )}
                         
-                        {/* Regional Languages */}
-                        {filteredToLanguages.regional && filteredToLanguages.regional.length > 0 && (
+                        {/* Rare Languages */}
+                        {filteredToLanguages.rare && filteredToLanguages.rare.length > 0 && (
                           <>
                             {(filteredToLanguages.popular.length > 0 || filteredToLanguages.common.length > 0 || filteredToLanguages.specialized.length > 0) && <Separator className="my-2" />}
                             <div className="px-2 py-1">
                               <div className="text-xs font-medium text-muted-foreground flex items-center">
                                 <MapPin className="w-3 h-3 mr-1" />
-                                Regional Languages
+                                Rare Languages
                               </div>
                             </div>
-                            {filteredToLanguages.regional.slice(0, toLanguageSearch ? 50 : 10).map((lang) => (
+                            {filteredToLanguages.rare.slice(0, toLanguageSearch ? 50 : 10).map((lang) => (
                               <SelectItem key={lang.code} value={lang.name}>
                                 <div className="flex items-center justify-between w-full">
                                   <div className="flex items-center space-x-2">
@@ -684,7 +684,7 @@ export default function BookSessionPage() {
                                   </div>
                                   <div className="flex items-center space-x-1">
                                     <span className="text-xs text-gray-500">{lang.region}</span>
-                                    <Badge className="bg-green-100 text-green-800 text-xs">Regional</Badge>
+                                    <Badge className="bg-green-100 text-green-800 text-xs">Rare</Badge>
                                   </div>
                                 </div>
                               </SelectItem>
@@ -697,7 +697,7 @@ export default function BookSessionPage() {
                          filteredToLanguages.popular.length === 0 && 
                          filteredToLanguages.common.length === 0 && 
                          filteredToLanguages.specialized.length === 0 && 
-                         (!filteredToLanguages.regional || filteredToLanguages.regional.length === 0) && (
+                         (!filteredToLanguages.rare || filteredToLanguages.rare.length === 0) && (
                           <div className="px-2 py-4 text-center text-sm text-muted-foreground">
                             No languages found matching "{toLanguageSearch}"
                           </div>

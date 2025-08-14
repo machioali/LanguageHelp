@@ -259,15 +259,24 @@ const companyHighlights = [
 ];
 
 export default function JobDetailsPage() {
-  const params = useParams();
-  const jobId = params.jobId as string;
+  const params = useParams() as { jobId?: string };
+  const jobId = params?.jobId;
   const [job, setJob] = useState<any>(null);
 
   useEffect(() => {
+    if (!jobId) return;
     // In a real app, fetch job data from API
     const jobKey = jobId.toLowerCase().replace(/\s+/g, '-');
     setJob(jobData[jobKey as keyof typeof jobData]);
   }, [jobId]);
+
+  if (!jobId) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p>Loading...</p>
+      </div>
+    );
+  }
 
   if (!job) {
     return (

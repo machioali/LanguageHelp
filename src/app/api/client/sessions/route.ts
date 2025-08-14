@@ -166,7 +166,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get client profile
-    let clientProfile = await prisma.clientProfile.findUnique({
+    const clientProfile = await prisma.clientProfile.findUnique({
       where: { userId: session.user.id },
       include: {
         subscriptions: {

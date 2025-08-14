@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 // Mock data - in a real app this would be a database
-let jobs = [
+const jobs = [
   {
     id: "1",
     title: "Healthcare Interpreter",

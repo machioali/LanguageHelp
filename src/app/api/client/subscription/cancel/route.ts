@@ -14,26 +14,23 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Find the user
-    const user = await prisma.user.findUnique({
-      where: { email: session.user.email },
-      include: {
-        subscriptions: {
-          where: { status: 'ACTIVE' },
-          orderBy: { createdAt: 'desc' },
-          take: 1
-        }
-      }
+    // Get the client's profile
+    const clientProfile = await prisma.clientProfile.findUnique({
+      where: { userId: session.user.id }
     });
 
-    if (!user) {
+    if (!clientProfile) {
       return NextResponse.json(
-        { success: false, error: 'User not found' },
+        { success: false, error: 'Client profile not found' },
         { status: 404 }
       );
     }
 
-    const currentSubscription = user.subscriptions[0];
+    // Find the client's current active subscription
+    const currentSubscription = await prisma.clientSubscription.findFirst({
+      where: { clientProfileId: clientProfile.id, status: 'ACTIVE' },
+      orderBy: { createdAt: 'desc' }
+    });
     if (!currentSubscription) {
       return NextResponse.json(
         { success: false, error: 'No active subscription found' },
@@ -49,57 +46,50 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Find or retrieve the user's old free trial subscription to get remaining minutes
-    let freeTrialMinutesRemaining = 60; // Default free trial minutes
-    
-    const oldFreeTrial = await prisma.subscription.findFirst({
+    // Determine free trial minutes
+    const FREE_TRIAL_MINUTES = 60;
+    let freeTrialMinutesRemaining = FREE_TRIAL_MINUTES;
+
+    const oldFreeTrial = await prisma.clientSubscription.findFirst({
       where: {
-        userId: user.id,
+        clientProfileId: clientProfile.id,
         planId: 'free_trial'
       },
       orderBy: { createdAt: 'asc' }
     });
 
     if (oldFreeTrial) {
-      // Calculate remaining minutes from the original free trial
-      // This would require tracking usage against the original free trial
-      // For now, let's assume some remaining minutes or reset to full free trial
-      const freeTrialPlan = await prisma.plan.findUnique({
-        where: { id: 'free_trial' }
-      });
-      freeTrialMinutesRemaining = freeTrialPlan?.minutes || 60;
+      // If previous trial existed, you could derive remaining differently; for now, reset to full trial
+      freeTrialMinutesRemaining = FREE_TRIAL_MINUTES;
     }
 
     // Cancel current subscription
-    await prisma.subscription.update({
+    await prisma.clientSubscription.update({
       where: { id: currentSubscription.id },
       data: { 
         status: 'CANCELLED',
-        endedAt: new Date()
+        cancelledAt: new Date(),
+        endDate: new Date()
       }
     });
 
-    // Create new free trial subscription
-    const freeTrialPlan = await prisma.plan.findUnique({
-      where: { id: 'free_trial' }
-    });
+    // Create new free trial subscription (1 month period)
+    const currentPeriodStart = new Date();
+    const currentPeriodEnd = new Date();
+    currentPeriodEnd.setMonth(currentPeriodEnd.getMonth() + 1);
 
-    if (!freeTrialPlan) {
-      return NextResponse.json(
-        { success: false, error: 'Free trial plan not found' },
-        { status: 404 }
-      );
-    }
-
-    const newFreeTrial = await prisma.subscription.create({
+    const newFreeTrial = await prisma.clientSubscription.create({
       data: {
-        userId: user.id,
+        clientProfileId: clientProfile.id,
         planId: 'free_trial',
-        status: 'ACTIVE',
-        currentPeriodStart: new Date(),
-        currentPeriodEnd: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 year from now
-        minutesUsed: Math.max(0, freeTrialPlan.minutes - freeTrialMinutesRemaining),
-        minutesRemaining: freeTrialMinutesRemaining
+        planName: 'Free Trial',
+        status: 'TRIAL',
+        monthlyPrice: 0,
+        minutesIncluded: FREE_TRIAL_MINUTES,
+        minutesUsed: 0,
+        minutesRemaining: freeTrialMinutesRemaining,
+        currentPeriodStart,
+        currentPeriodEnd
       }
     });
 

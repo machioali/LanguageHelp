@@ -15,6 +15,7 @@ export default function SettingsPage() {
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [pushNotifications, setPushNotifications] = useState(false);
   const [maintenanceMode, setMaintenanceMode] = useState(false);
+  const [twoFactorAuth, setTwoFactorAuth] = useState(true);
 
   return (
     <div className="px-4 sm:px-6 lg:px-8 py-6">
@@ -60,11 +61,10 @@ export default function SettingsPage() {
               </div>
               <div className="flex items-center space-x-2">
                 <Switch 
-                  id="maintenance-mode" 
                   checked={maintenanceMode}
                   onCheckedChange={setMaintenanceMode}
                 />
-                <Label htmlFor="maintenance-mode">Enable Maintenance Mode</Label>
+                <Label>Enable Maintenance Mode</Label>
                 {maintenanceMode && (
                   <Badge variant="destructive">Active</Badge>
                 )}
@@ -138,7 +138,7 @@ export default function SettingsPage() {
               <div className="space-y-2">
                 <Label>Two-Factor Authentication</Label>
                 <p className="text-sm text-muted-foreground">Require 2FA for admin accounts</p>
-                <Switch defaultChecked />
+                <Switch checked={twoFactorAuth} onCheckedChange={setTwoFactorAuth} />
               </div>
             </CardContent>
           </Card>
