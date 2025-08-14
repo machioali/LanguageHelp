@@ -31,6 +31,21 @@ const SignInPage = () => {
     }
 
     try {
+      // First check if auth is configured properly
+      const authConfigResponse = await fetch('/api/test-auth');
+      if (!authConfigResponse.ok) {
+        setError('Authentication service is not properly configured. Please contact support.');
+        setIsLoading(false);
+        return;
+      }
+
+      const authConfig = await authConfigResponse.json();
+      if (!authConfig.success || authConfig.config.nextAuthSecret === 'Missing') {
+        setError('Authentication configuration error. Please contact support.');
+        setIsLoading(false);
+        return;
+      }
+
       const result = await signIn('credentials', {
         email: email.trim().toLowerCase(),
         password,
@@ -38,29 +53,41 @@ const SignInPage = () => {
       });
 
       if (result?.error) {
+        console.error('Sign-in result error:', result.error);
         setError('Invalid email or password. Please try again.');
       } else if (result?.ok) {
-        // Get session to check user role
-        const response = await fetch('/api/auth/session');
-        const session = await response.json();
-        
-        if (!session?.user) {
-          setError('Authentication failed. Please try again.');
-          return;
-        }
+        try {
+          // Get session to check user role
+          const response = await fetch('/api/auth/session');
+          if (!response.ok) {
+            throw new Error('Failed to get session');
+          }
+          
+          const session = await response.json();
+          
+          if (!session?.user) {
+            setError('Authentication failed. Please try again.');
+            return;
+          }
 
-        // Check if user is CLIENT role
-        if (session.user.role !== 'CLIENT') {
-          setError(`Access denied. This is for clients only. ${session.user.role === 'ADMIN' ? 'Use admin sign-in.' : session.user.role === 'INTERPRETER' ? 'Use interpreter sign-in.' : ''}`);
-          return;
-        }
+          // Check if user is CLIENT role
+          if (session.user.role !== 'CLIENT') {
+            setError(`Access denied. This is for clients only. ${session.user.role === 'ADMIN' ? 'Use admin sign-in.' : session.user.role === 'INTERPRETER' ? 'Use interpreter sign-in.' : ''}`);
+            return;
+          }
 
-        // Successful CLIENT sign-in
-        router.push('/dashboard');
+          // Successful CLIENT sign-in
+          router.push('/dashboard');
+        } catch (sessionError) {
+          console.error('Session error:', sessionError);
+          setError('Failed to verify session. Please try again.');
+        }
+      } else {
+        setError('Sign-in failed. Please try again.');
       }
     } catch (err) {
       console.error('Sign-in error:', err);
-      setError('An error occurred during sign-in. Please try again.');
+      setError(`An error occurred during sign-in: ${err instanceof Error ? err.message : 'Unknown error'}`);
     } finally {
       setIsLoading(false);
     }
