@@ -1,5 +1,10 @@
 import { PrismaClient } from '@prisma/client';
 
+// Augment global namespace for Prisma singleton
+declare global {
+  var __prisma: PrismaClient | undefined;
+}
+
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };

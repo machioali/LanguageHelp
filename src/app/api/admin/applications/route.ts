@@ -40,7 +40,7 @@ export async function GET(request: NextRequest) {
     ]);
 
     // Parse JSON fields
-    const parsedApplications = applications.map(app => ({
+    const parsedApplications = applications.map((app: any) => ({
       ...app,
       languages: JSON.parse(app.languages || '[]'),
       specializations: JSON.parse(app.specializations || '[]'),

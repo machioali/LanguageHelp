@@ -230,7 +230,6 @@ const SignUpPage = () => {
                 id="terms" 
                 checked={agreedToTerms}
                 onCheckedChange={(checked) => setAgreedToTerms(checked === true)}
-                required 
               />
               <Label htmlFor="terms" className="text-sm font-normal">
                 I agree to the{' '}
