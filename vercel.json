@@ -13,5 +13,7 @@
       "destination": "/api/socket"
     }
   ],
-  "buildCommand": "npx prisma generate && npm run build"
+  "buildCommand": "npx prisma generate && npm run build",
+  "installCommand": "npm install",
+  "framework": "nextjs"
 }
