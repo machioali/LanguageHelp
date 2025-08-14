@@ -190,7 +190,7 @@ export function useSubscription() {
   useEffect(() => {
     if (session?.user?.role === 'CLIENT') {
       fetchSubscription();
-    } else if (session?.user?.role !== 'CLIENT') {
+    } else {
       // Not a client, set empty subscription
       setSubscription({
         hasSubscription: false,
