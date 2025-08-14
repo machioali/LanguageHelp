@@ -1,4 +1,4 @@
-import { UserRole } from '@/lib/constants';
+import { UserRoleType } from '@/lib/constants';
 import 'next-auth';
 
 declare module 'next-auth' {
@@ -8,7 +8,7 @@ declare module 'next-auth' {
       name?: string | null;
       email?: string | null;
       image?: string | null;
-      role: UserRole;
+      role: UserRoleType;
     };
   }
 
@@ -17,13 +17,13 @@ declare module 'next-auth' {
     name?: string | null;
     email?: string | null;
     image?: string | null;
-    role: UserRole;
+    role: UserRoleType;
   }
 }
 
 declare module 'next-auth/jwt' {
   interface JWT {
     id: string;
-    role: UserRole;
+    role: UserRoleType;
   }
 }
