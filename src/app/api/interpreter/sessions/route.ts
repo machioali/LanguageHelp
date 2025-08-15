@@ -97,7 +97,7 @@ export async function GET(request: NextRequest) {
     });
 
     // Convert database sessions to the format expected by the frontend
-    const reports = sessions.map((session) => {
+    const reports = sessions.map((session: any) => {
       // Format dates and times
       const sessionDate = new Date(session.scheduledAt);
       const startTime = sessionDate.toLocaleTimeString('en-US', {
@@ -147,18 +147,18 @@ export async function GET(request: NextRequest) {
 
     // Status filter
     if (status !== 'all') {
-      filteredReports = filteredReports.filter(report => report.status === status);
+      filteredReports = filteredReports.filter((report: any) => report.status === status);
     }
 
     // Type filter
     if (type !== 'all') {
-      filteredReports = filteredReports.filter(report => report.type === type);
+      filteredReports = filteredReports.filter((report: any) => report.type === type);
     }
 
     // Search filter
     if (search) {
       const searchLower = search.toLowerCase();
-      filteredReports = filteredReports.filter(report =>
+      filteredReports = filteredReports.filter((report: any) =>
         report.client.toLowerCase().includes(searchLower) ||
         report.language.toLowerCase().includes(searchLower)
       );
@@ -166,16 +166,16 @@ export async function GET(request: NextRequest) {
 
     // Calculate summary statistics
     const totalSessions = reports.length;
-    const completedSessions = reports.filter(r => r.status === 'Completed').length;
+    const completedSessions = reports.filter((r: any) => r.status === 'Completed').length;
     const totalEarnings = reports
-      .filter(r => r.status === 'Completed')
-      .reduce((sum, r) => sum + parseFloat(r.earnings.replace('$', '')), 0);
+      .filter((r: any) => r.status === 'Completed')
+      .reduce((sum: number, r: any) => sum + parseFloat(r.earnings.replace('$', '')), 0);
     const avgRating = reports
-      .filter(r => r.rating !== null)
-      .reduce((sum, r, _, arr) => sum + (r.rating || 0) / arr.length, 0);
+      .filter((r: any) => r.rating !== null)
+      .reduce((sum: number, r: any, _: any, arr: any[]) => sum + (r.rating || 0) / arr.length, 0);
     const totalHours = reports
-      .filter(r => r.status === 'Completed')
-      .reduce((sum, r) => {
+      .filter((r: any) => r.status === 'Completed')
+      .reduce((sum: number, r: any) => {
         const duration = parseInt(r.duration.replace(' min', ''));
         return sum + (duration / 60);
       }, 0);

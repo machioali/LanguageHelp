@@ -71,12 +71,12 @@ export async function GET(request: NextRequest) {
 
     // Separate upcoming and past sessions
     const now = new Date();
-    const upcomingSessions = sessions.filter(s => 
+    const upcomingSessions = sessions.filter((s: any) => 
       s.scheduledAt && s.scheduledAt > now && 
       ['CONFIRMED', 'MATCHED'].includes(s.status)
     );
 
-    const pastSessions = sessions.filter(s => 
+    const pastSessions = sessions.filter((s: any) => 
       ['COMPLETED', 'CANCELLED', 'NO_SHOW'].includes(s.status)
     );
 
@@ -108,13 +108,13 @@ export async function GET(request: NextRequest) {
     const formattedPast = pastSessions.map(formatSession);
 
     // Calculate summary statistics
-    const completedSessions = pastSessions.filter(s => s.status === 'COMPLETED');
+    const completedSessions = pastSessions.filter((s: any) => s.status === 'COMPLETED');
     const summary = {
       totalSessions: sessions.length,
       completedSessions: completedSessions.length,
-      totalMinutesUsed: completedSessions.reduce((sum, s) => sum + (s.duration || 0), 0),
+      totalMinutesUsed: completedSessions.reduce((sum: number, s: any) => sum + (s.duration || 0), 0),
       averageRating: completedSessions.length > 0 
-        ? completedSessions.reduce((sum, s) => sum + (s.clientRating || 0), 0) / completedSessions.length
+        ? completedSessions.reduce((sum: number, s: any) => sum + (s.clientRating || 0), 0) / completedSessions.length
         : 0
     };
 

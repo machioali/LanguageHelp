@@ -94,7 +94,7 @@ export async function POST(request: NextRequest) {
     const hashedTempPassword = await hashPassword(credentials.tempPassword);
     
     // Create user and interpreter profile in a transaction
-    const result = await prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx: any) => {
       // Create the user
       const user = await tx.user.create({
         data: {

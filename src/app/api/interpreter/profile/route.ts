@@ -109,49 +109,49 @@ export async function GET(request: NextRequest) {
     });
 
     // Calculate today's stats (using scheduledAt for consistency)
-    const todaySessions = allSessions.filter(s => 
+    const todaySessions = allSessions.filter((s: any) => 
       s.scheduledAt && s.scheduledAt >= today
     );
-    const todayCompleted = todaySessions.filter(s => s.status === 'COMPLETED');
+    const todayCompleted = todaySessions.filter((s: any) => s.status === 'COMPLETED');
     
     // Calculate this week's stats  
-    const thisWeekSessions = allSessions.filter(s => 
+    const thisWeekSessions = allSessions.filter((s: any) => 
       s.scheduledAt && s.scheduledAt >= startOfWeek
     );
-    const thisWeekCompleted = thisWeekSessions.filter(s => s.status === 'COMPLETED');
+    const thisWeekCompleted = thisWeekSessions.filter((s: any) => s.status === 'COMPLETED');
     
     // Calculate this month's stats
-    const thisMonthSessions = allSessions.filter(s => 
+    const thisMonthSessions = allSessions.filter((s: any) => 
       s.scheduledAt && s.scheduledAt >= startOfMonth
     );
-    const thisMonthCompleted = thisMonthSessions.filter(s => s.status === 'COMPLETED');
+    const thisMonthCompleted = thisMonthSessions.filter((s: any) => s.status === 'COMPLETED');
     
     // Calculate overall stats
-    const completedSessions = allSessions.filter(s => s.status === 'COMPLETED');
+    const completedSessions = allSessions.filter((s: any) => s.status === 'COMPLETED');
     const totalSessions = allSessions.length;
     const completionRate = totalSessions > 0 ? Math.round((completedSessions.length / totalSessions) * 100) : 0;
     
     // Calculate average rating
-    const ratedSessions = completedSessions.filter(s => s.rating && s.rating > 0);
+    const ratedSessions = completedSessions.filter((s: any) => s.rating && s.rating > 0);
     const avgRating = ratedSessions.length > 0 
-      ? Math.round((ratedSessions.reduce((sum, s) => sum + (s.rating || 0), 0) / ratedSessions.length) * 10) / 10 
+      ? Math.round((ratedSessions.reduce((sum: number, s: any) => sum + (s.rating || 0), 0) / ratedSessions.length) * 10) / 10 
       : 0;
     
     const stats = {
       today: { 
         sessions: todayCompleted.length,
-        hours: Math.round((todayCompleted.reduce((sum, s) => sum + (s.duration || 0), 0) / 60) * 10) / 10,
-        earnings: Math.round(todayCompleted.reduce((sum, s) => sum + (s.earnings || 0), 0) * 100) / 100
+        hours: Math.round((todayCompleted.reduce((sum: number, s: any) => sum + (s.duration || 0), 0) / 60) * 10) / 10,
+        earnings: Math.round(todayCompleted.reduce((sum: number, s: any) => sum + (s.earnings || 0), 0) * 100) / 100
       },
       thisWeek: { 
         sessions: thisWeekCompleted.length,
-        hours: Math.round((thisWeekCompleted.reduce((sum, s) => sum + (s.duration || 0), 0) / 60) * 10) / 10,
-        earnings: Math.round(thisWeekCompleted.reduce((sum, s) => sum + (s.earnings || 0), 0) * 100) / 100
+        hours: Math.round((thisWeekCompleted.reduce((sum: number, s: any) => sum + (s.duration || 0), 0) / 60) * 10) / 10,
+        earnings: Math.round(thisWeekCompleted.reduce((sum: number, s: any) => sum + (s.earnings || 0), 0) * 100) / 100
       },
       thisMonth: { 
         sessions: thisMonthCompleted.length,
-        hours: Math.round((thisMonthCompleted.reduce((sum, s) => sum + (s.duration || 0), 0) / 60) * 10) / 10,
-        earnings: Math.round(thisMonthCompleted.reduce((sum, s) => sum + (s.earnings || 0), 0) * 100) / 100
+        hours: Math.round((thisMonthCompleted.reduce((sum: number, s: any) => sum + (s.duration || 0), 0) / 60) * 10) / 10,
+        earnings: Math.round(thisMonthCompleted.reduce((sum: number, s: any) => sum + (s.earnings || 0), 0) * 100) / 100
       },
       rating: avgRating,
       totalSessions: totalSessions,
@@ -178,7 +178,7 @@ export async function GET(request: NextRequest) {
         isVerified: profile.isVerified,
         availability: profile.availability,
         languages: profile.languages,
-        specializations: profile.specializations.map(s => s.specialization),
+        specializations: profile.specializations.map((s: any) => s.specialization),
         certifications: profile.certifications,
       },
       credentials: {
