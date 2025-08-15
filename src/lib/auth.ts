@@ -119,11 +119,9 @@ export const authOptions: NextAuthOptions = {
     },
     async signIn({ user }) {
       console.log('User signed in:', user.email);
-      return true;
     },
     async session({ session }) {
       console.log('Session created:', session.user?.email);
-      return session;
     },
   },
   logger: {
