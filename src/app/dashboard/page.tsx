@@ -210,7 +210,7 @@ export default function DashboardPage() {
                 Your interpretation dashboard
                 <Link href="/dashboard/sessions" className="font-semibold text-primary ml-1">
                   <span className="absolute inset-0" aria-hidden="true" />
-                  View all sessions <span aria-hidden="true">&rarr;</span>
+                  View all sessions <span aria-hidden="true">→</span>
                 </Link>
               </div>
             </div>

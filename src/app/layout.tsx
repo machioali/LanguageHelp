@@ -3,6 +3,7 @@ import { ThemeProvider } from '@/components/providers/theme-provider';
 import { AuthProvider } from '@/components/providers/auth-provider';
 import { ToastProvider } from '@/components/providers/toast-provider';
 import { LayoutWrapper } from '@/components/layout/layout-wrapper';
+import { ErrorBoundary } from '@/components/error-boundary';
 import './globals.css';
 import { metadata } from './metadata';
 
@@ -24,19 +25,21 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.variable} suppressHydrationWarning>
       <body className="min-h-screen bg-background font-sans antialiased">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <AuthProvider>
-            <LayoutWrapper>
-              {children}
-            </LayoutWrapper>
-            <ToastProvider />
-          </AuthProvider>
-        </ThemeProvider>
+        <ErrorBoundary>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <AuthProvider>
+              <LayoutWrapper>
+                {children}
+              </LayoutWrapper>
+              <ToastProvider />
+            </AuthProvider>
+          </ThemeProvider>
+        </ErrorBoundary>
       </body>
     </html>
   );

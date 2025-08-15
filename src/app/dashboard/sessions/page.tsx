@@ -171,7 +171,7 @@ export default function SessionsPage() {
                 Your interpretation sessions
                 <Link href="/dashboard" className="font-semibold text-primary ml-1">
                   <span className="absolute inset-0" aria-hidden="true" />
-                  Back to dashboard <span aria-hidden="true">&rarr;</span>
+                  Back to dashboard <span aria-hidden="true">→</span>
                 </Link>
               </div>
             </div>
