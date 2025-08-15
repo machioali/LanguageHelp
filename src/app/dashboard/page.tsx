@@ -80,7 +80,7 @@ export default function DashboardPage() {
         
         // Handle profile response
         if (profileRes.ok) {
-          profileData = await profileRes.json();
+          profileData = await (profileRes as Response).json();
         } else {
           // Use fallback data when API fails
           profileData = {
@@ -101,7 +101,7 @@ export default function DashboardPage() {
         
         // Handle sessions response
         if (sessionsRes.ok) {
-          sessionsData = await sessionsRes.json();
+          sessionsData = await (sessionsRes as Response).json();
         } else {
           // Use fallback session data
           sessionsData = {

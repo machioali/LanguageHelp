@@ -9,16 +9,17 @@ export const runtime = 'nodejs';
 
 // GET /api/client/profile - Get current client's profile data
 export async function GET(request: NextRequest) {
+  // Get session from NextAuth
+  const session = await getServerSession(authOptions);
+  
+  if (!session || !session.user || session.user.role !== 'CLIENT') {
+    return NextResponse.json(
+      { error: 'Authentication required - must be a client' },
+      { status: 401 }
+    );
+  }
+
   try {
-    // Get session from NextAuth
-    const session = await getServerSession(authOptions);
-    
-    if (!session || !session.user || session.user.role !== 'CLIENT') {
-      return NextResponse.json(
-        { error: 'Authentication required - must be a client' },
-        { status: 401 }
-      );
-    }
 
     // Get client user with profile using retry mechanism
     const client = await executeWithRetry(async () => {
@@ -141,16 +142,16 @@ export async function GET(request: NextRequest) {
     const fallbackData = {
       success: true,
       client: {
-        id: session.user.id,
-        email: session.user.email,
-        name: session.user.name || 'User',
-        role: session.user.role,
+        id: session?.user?.id || 'demo-user',
+        email: session?.user?.email || 'user@example.com',
+        name: session?.user?.name || 'User',
+        role: session?.user?.role || 'CLIENT',
         emailVerified: null
       },
       profile: {
         id: 'fallback',
-        firstName: session.user.name?.split(' ')[0] || 'User',
-        lastName: session.user.name?.split(' ').slice(1).join(' ') || '',
+        firstName: session?.user?.name?.split(' ')[0] || 'User',
+        lastName: session?.user?.name?.split(' ').slice(1).join(' ') || '',
         phone: null,
         phoneVerified: false,
         company: null,
