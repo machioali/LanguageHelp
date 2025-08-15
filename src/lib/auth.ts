@@ -7,6 +7,7 @@ import { prisma } from '@/lib/prisma';
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma) as any,
+  debug: process.env.NODE_ENV === 'development',
   providers: [
     CredentialsProvider({
       name: 'credentials',
@@ -115,6 +116,27 @@ export const authOptions: NextAuthOptions = {
   events: {
     async signOut() {
       // This will be handled by the redirect callback
+    },
+    async signIn({ user }) {
+      console.log('User signed in:', user.email);
+      return true;
+    },
+    async session({ session }) {
+      console.log('Session created:', session.user?.email);
+      return session;
+    },
+  },
+  logger: {
+    error(code, metadata) {
+      console.error('NextAuth Error:', code, metadata);
+    },
+    warn(code) {
+      console.warn('NextAuth Warning:', code);
+    },
+    debug(code, metadata) {
+      if (process.env.NODE_ENV === 'development') {
+        console.log('NextAuth Debug:', code, metadata);
+      }
     },
   },
   secret: process.env.NEXTAUTH_SECRET,
