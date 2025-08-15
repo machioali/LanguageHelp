@@ -46,7 +46,6 @@ export async function PUT(
       );
     }
 
-    let updatedUser;
     let statusMessage = '';
 
     switch (action) {
@@ -97,7 +96,7 @@ export async function PUT(
     }
 
     // Get updated user data
-    updatedUser = await prisma.user.findUnique({
+    const updatedUser = await prisma.user.findUnique({
       where: { id },
       select: {
         id: true,

@@ -224,7 +224,7 @@ export const getLanguagesByRegion = (region: string): Language[] => {
 
 export const getAllRegions = (): string[] => {
   const regions = new Set(LANGUAGES.map(lang => lang.region).filter(Boolean));
-  return Array.from(regions).filter((region): region is string => region !== undefined).sort();
+  return Array.from(regions).filter((region): region is string => typeof region === 'string').sort();
 };
 
 export const searchLanguages = (query: string): Language[] => {
