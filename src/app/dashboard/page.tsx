@@ -349,7 +349,7 @@ export default function DashboardPage() {
                           key={star} 
                           className={cn(
                             "h-3 w-3 transition-colors duration-300",
-                            star <= data.stats.averageRating 
+                            star <= (data.stats.averageRating || 0)
                               ? "text-yellow-400 fill-yellow-400" 
                               : "text-gray-300 dark:text-gray-600"
                           )} 
@@ -556,12 +556,12 @@ export default function DashboardPage() {
                       </div>
                     </div>
                     <div className="flex items-center space-x-2">
-                      {session.rating && (
+                      {session.rating ? (
                         <div className="flex items-center">
                           <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                           <span className="ml-1 text-sm">{session.rating}</span>
                         </div>
-                      )}
+                      ) : null}
                       <Badge variant={session.status === 'Completed' ? 'default' : 'secondary'}>
                         {session.status}
                       </Badge>
