@@ -148,28 +148,28 @@ export class PrivateAnalyticsManager {
     console.log(`📊 Found ${sessions.length} sessions in ${timeRange} and ${allTimeSessions.length} all-time sessions for interpreter: ${this.interpreterProfileId}`);
 
     // Calculate period-specific metrics (for the selected time range)
-    const completedSessions = sessions.filter(s => s.status === 'COMPLETED');
-    const cancelledSessions = sessions.filter(s => s.status === 'CANCELLED');
-    const noShowSessions = sessions.filter(s => s.status === 'NO_SHOW');
+    const completedSessions = sessions.filter((s: any) => s.status === 'COMPLETED');
+    const cancelledSessions = sessions.filter((s: any) => s.status === 'CANCELLED');
+    const noShowSessions = sessions.filter((s: any) => s.status === 'NO_SHOW');
     
-    const totalEarnings = completedSessions.reduce((sum, session) => sum + session.earnings, 0);
+    const totalEarnings = completedSessions.reduce((sum: number, session: any) => sum + session.earnings, 0);
     const totalSessions = sessions.length;
     const avgRating = completedSessions.length > 0 ? 
-      completedSessions.reduce((sum, session) => sum + (session.rating || 0), 0) / completedSessions.length : 0.0;
-    const totalHours = completedSessions.reduce((sum, session) => sum + (session.duration || 0), 0) / 60;
+      completedSessions.reduce((sum: number, session: any) => sum + (session.rating || 0), 0) / completedSessions.length : 0.0;
+    const totalHours = completedSessions.reduce((sum: number, session: any) => sum + (session.duration || 0), 0) / 60;
 
     // Calculate ALL-TIME metrics for comparison
-    const allTimeCompleted = allTimeSessions.filter(s => s.status === 'COMPLETED');
-    const allTimeTotalEarnings = allTimeCompleted.reduce((sum, session) => sum + session.earnings, 0);
+    const allTimeCompleted = allTimeSessions.filter((s: any) => s.status === 'COMPLETED');
+    const allTimeTotalEarnings = allTimeCompleted.reduce((sum: number, session: any) => sum + session.earnings, 0);
     const allTimeTotalSessions = allTimeSessions.length;
     const allTimeAvgRating = allTimeCompleted.length > 0 ? 
-      allTimeCompleted.reduce((sum, session) => sum + (session.rating || 0), 0) / allTimeCompleted.length : 0.0;
-    const allTimeTotalHours = allTimeCompleted.reduce((sum, session) => sum + (session.duration || 0), 0) / 60;
+      allTimeCompleted.reduce((sum: number, session: any) => sum + (session.rating || 0), 0) / allTimeCompleted.length : 0.0;
+    const allTimeTotalHours = allTimeCompleted.reduce((sum: number, session: any) => sum + (session.duration || 0), 0) / 60;
 
     // Performance metrics
     const completionRate = totalSessions > 0 ? (completedSessions.length / totalSessions) * 100 : 0.0;
     const avgSessionDuration = completedSessions.length > 0 ? 
-      completedSessions.reduce((sum, s) => sum + (s.duration || 0), 0) / completedSessions.length : 0.0;
+      completedSessions.reduce((sum: number, s: any) => sum + (s.duration || 0), 0) / completedSessions.length : 0.0;
     const responseTime = totalSessions === 0 ? 0 : 
                         completionRate > 80 ? 12 : 
                         completionRate > 60 ? 18 : 25;
@@ -354,15 +354,15 @@ export class PrivateAnalyticsManager {
       const weekStart = new Date(endDate.getTime() - (i + 1) * weekMs);
       const weekEnd = new Date(endDate.getTime() - i * weekMs);
       
-      const weekSessions = sessions.filter(s => 
+      const weekSessions = sessions.filter((s: any) => 
         s.scheduledAt >= weekStart && s.scheduledAt < weekEnd
       );
       
-      const vriSessions = weekSessions.filter(s => s.sessionType === 'VRI').length;
-      const opiSessions = weekSessions.filter(s => s.sessionType === 'OPI').length;
+      const vriSessions = weekSessions.filter((s: any) => s.sessionType === 'VRI').length;
+      const opiSessions = weekSessions.filter((s: any) => s.sessionType === 'OPI').length;
       const weekEarnings = weekSessions
-        .filter(s => s.status === 'COMPLETED')
-        .reduce((sum, s) => sum + s.earnings, 0);
+        .filter((s: any) => s.status === 'COMPLETED')
+        .reduce((sum: number, s: any) => sum + s.earnings, 0);
       
       sessionsOverTime.unshift({
         period: `Week ${numberOfWeeks - i}`,
@@ -381,7 +381,7 @@ export class PrivateAnalyticsManager {
   private calculateTopLanguages(sessions: any[]) {
     const languageStats: Record<string, { sessions: number; earnings: number }> = {};
     
-    sessions.forEach(session => {
+    sessions.forEach((session: any) => {
       const langPair = `${session.languageFrom} → ${session.languageTo}`;
       if (!languageStats[langPair]) {
         languageStats[langPair] = { sessions: 0, earnings: 0 };
@@ -429,16 +429,16 @@ export class PrivateAnalyticsManager {
       }
     });
 
-    const previousCompleted = previousSessions.filter(s => s.status === 'COMPLETED');
-    const currentCompleted = currentSessions.filter(s => s.status === 'COMPLETED');
+    const previousCompleted = previousSessions.filter((s: any) => s.status === 'COMPLETED');
+    const currentCompleted = currentSessions.filter((s: any) => s.status === 'COMPLETED');
     
-    const previousEarnings = previousCompleted.reduce((sum, s) => sum + s.earnings, 0);
-    const currentEarnings = currentCompleted.reduce((sum, s) => sum + s.earnings, 0);
+    const previousEarnings = previousCompleted.reduce((sum: number, s: any) => sum + s.earnings, 0);
+    const currentEarnings = currentCompleted.reduce((sum: number, s: any) => sum + s.earnings, 0);
     
     const previousAvgRating = previousCompleted.length > 0 ? 
-      previousCompleted.reduce((sum, s) => sum + (s.rating || 0), 0) / previousCompleted.length : 0;
+      previousCompleted.reduce((sum: number, s: any) => sum + (s.rating || 0), 0) / previousCompleted.length : 0;
     const currentAvgRating = currentCompleted.length > 0 ? 
-      currentCompleted.reduce((sum, s) => sum + (s.rating || 0), 0) / currentCompleted.length : 0;
+      currentCompleted.reduce((sum: number, s: any) => sum + (s.rating || 0), 0) / currentCompleted.length : 0;
     
     const earningsGrowth = previousEarnings > 0 ? 
       ((currentEarnings - previousEarnings) / previousEarnings) * 100 : 0;

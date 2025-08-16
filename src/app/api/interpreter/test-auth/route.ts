@@ -114,7 +114,7 @@ export async function GET(request: NextRequest) {
       },
       sessionData: {
         totalSessions: sessionCount,
-        recentSessions: recentSessions.slice(0, 3).map(s => ({
+        recentSessions: recentSessions.slice(0, 3).map((s: any) => ({
           id: s.id,
           type: s.sessionType,
           language: `${s.languageFrom} → ${s.languageTo}`,

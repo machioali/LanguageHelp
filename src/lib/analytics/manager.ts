@@ -131,15 +131,15 @@ export class AnalyticsManager {
       const weekStart = new Date(endDate.getTime() - (i + 1) * weekMs);
       const weekEnd = new Date(endDate.getTime() - i * weekMs);
       
-      const weekSessions = sessions.filter(s => 
+      const weekSessions = sessions.filter((s: any) => 
         s.scheduledAt >= weekStart && s.scheduledAt < weekEnd
       );
       
-      const vriSessions = weekSessions.filter(s => s.sessionType === 'VRI').length;
-      const opiSessions = weekSessions.filter(s => s.sessionType === 'OPI').length;
+      const vriSessions = weekSessions.filter((s: any) => s.sessionType === 'VRI').length;
+      const opiSessions = weekSessions.filter((s: any) => s.sessionType === 'OPI').length;
       const weekEarnings = weekSessions
-        .filter(s => s.status === 'COMPLETED')
-        .reduce((sum, s) => sum + s.earnings, 0);
+        .filter((s: any) => s.status === 'COMPLETED')
+        .reduce((sum: number, s: any) => sum + s.earnings, 0);
       
       sessionsOverTime.unshift({
         period: `Week ${numberOfWeeks - i}`,
@@ -158,7 +158,7 @@ export class AnalyticsManager {
   private calculateTopLanguages(sessions: any[]) {
     const languageStats: Record<string, { sessions: number; earnings: number }> = {};
     
-    sessions.forEach(session => {
+    sessions.forEach((session: any) => {
       if (!languageStats[session.languageTo]) {
         languageStats[session.languageTo] = { sessions: 0, earnings: 0 };
       }
@@ -205,16 +205,16 @@ export class AnalyticsManager {
       }
     });
 
-    const previousCompleted = previousSessions.filter(s => s.status === 'COMPLETED');
-    const currentCompleted = currentSessions.filter(s => s.status === 'COMPLETED');
+    const previousCompleted = previousSessions.filter((s: any) => s.status === 'COMPLETED');
+    const currentCompleted = currentSessions.filter((s: any) => s.status === 'COMPLETED');
     
-    const previousEarnings = previousCompleted.reduce((sum, s) => sum + s.earnings, 0);
-    const currentEarnings = currentCompleted.reduce((sum, s) => sum + s.earnings, 0);
+    const previousEarnings = previousCompleted.reduce((sum: number, s: any) => sum + s.earnings, 0);
+    const currentEarnings = currentCompleted.reduce((sum: number, s: any) => sum + s.earnings, 0);
     
     const previousAvgRating = previousCompleted.length > 0 ? 
-      previousCompleted.reduce((sum, s) => sum + (s.rating || 0), 0) / previousCompleted.length : 0;
+      previousCompleted.reduce((sum: number, s: any) => sum + (s.rating || 0), 0) / previousCompleted.length : 0;
     const currentAvgRating = currentCompleted.length > 0 ? 
-      currentCompleted.reduce((sum, s) => sum + (s.rating || 0), 0) / currentCompleted.length : 0;
+      currentCompleted.reduce((sum: number, s: any) => sum + (s.rating || 0), 0) / currentCompleted.length : 0;
     
     const earningsGrowth = previousEarnings > 0 ? 
       ((currentEarnings - previousEarnings) / previousEarnings) * 100 : 0;

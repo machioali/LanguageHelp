@@ -58,7 +58,7 @@ export async function PUT(request: NextRequest) {
     }
 
     // Start a transaction to update both user and interpreter profile
-    const result = await prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (tx: any) => {
       // Update user table if email is provided
       if (email && email !== '') {
         await tx.user.update({
@@ -158,7 +158,7 @@ export async function PUT(request: NextRequest) {
         isVerified: result.isVerified,
         availability: result.availability,
         languages: result.languages,
-        specializations: result.specializations.map(s => s.specialization),
+        specializations: result.specializations.map((s: any) => s.specialization),
         certifications: result.certifications,
       },
       credentials: {
